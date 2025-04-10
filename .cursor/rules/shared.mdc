@@ -3,9 +3,9 @@ description:
 globs: 
 alwaysApply: true
 ---
-# AI Rules for {app-name}
+# AI Rules for FiszkiES
 
-{project-description}
+A web application designed to help Polish users learn Spanish by automatically generating flashcards from any pasted text, allowing users to save and interactively practice them.
 
 ## Tech Stack
 
