@@ -41,7 +41,7 @@ FiszkiES is a modern web application that helps Polish users learn Spanish throu
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/FiszkiES.git
+git clone https://github.com/bmalocha/FiszkiES.git
 cd FiszkiES
 ```
 

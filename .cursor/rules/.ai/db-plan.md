@@ -50,26 +50,26 @@ COMMENT ON COLUMN public.flashcards.created_at IS 'Timestamp when the flashcard 
 Rejestruje kluczowe akcje wykonywane przez użytkowników w aplikacji.
 
 ```sql
+
 CREATE TABLE public.action_logs (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
     action_type public.action_enum NOT NULL,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT now(), -- Zmieniono nazwę z timestamp
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
     related_flashcard_id UUID NULL REFERENCES public.flashcards(id) ON DELETE SET NULL,
-    generated_count INTEGER NULL,
     input_text_length INTEGER NULL,
-    cards_count INTEGER NULL -- Dodano kolumnę dla liczby kart (np. w GENERATE, START_SESSION)
+    cards_count INTEGER NULL -- Liczba kart (np. wygenerowanych w GENERATE, użytych w START_SESSION)
 );
 
 COMMENT ON TABLE public.action_logs IS 'Logs key user actions within the application for future analysis.';
 COMMENT ON COLUMN public.action_logs.id IS 'Primary key for the log entry.';
 COMMENT ON COLUMN public.action_logs.user_id IS 'Foreign key referencing the user who performed the action (from auth.users).';
 COMMENT ON COLUMN public.action_logs.action_type IS 'The type of action performed (e.g., GENERATE, ADD, DELETE).';
-COMMENT ON COLUMN public.action_logs.created_at IS 'Timestamp when the action occurred.'; -- Zaktualizowano komentarz
+COMMENT ON COLUMN public.action_logs.created_at IS 'Timestamp when the action occurred.';
 COMMENT ON COLUMN public.action_logs.related_flashcard_id IS 'Optional foreign key linking the action to a specific flashcard (e.g., for ADD, DELETE actions). Set to NULL if the related flashcard is deleted.';
-COMMENT ON COLUMN public.action_logs.generated_count IS 'Number of flashcards proposed in a GENERATE action.'; -- Doprecyzowano komentarz
 COMMENT ON COLUMN public.action_logs.input_text_length IS 'Length of the input text used in a GENERATE action.';
-COMMENT ON COLUMN public.action_logs.cards_count IS 'Number of cards involved in the action (e.g., proposed in GENERATE, included in START_SESSION).'; -- Dodano komentarz
+COMMENT ON COLUMN public.action_logs.cards_count IS 'Number of cards involved in the action (e.g., generated in GENERATE, included in START_SESSION).';
+
 ```
 
 ## 2. Relacje między tabelami
