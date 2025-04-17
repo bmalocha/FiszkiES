@@ -39,4 +39,14 @@ export class ActionLogsService {
       // We don't throw here as logging failures shouldn't break the main flow
     }
   }
+
+  /**
+   * Logs a flashcard ADD action to the action_logs table
+   * @param userId - ID of the user performing the action
+   * @param flashcardId - ID of the flashcard being added
+   * @returns void - This function doesn't throw errors, it only logs them
+   */
+  async logFlashcardAdd(userId: string, flashcardId: string): Promise<void> {
+    await this.logAction(userId, "ADD", { related_flashcard_id: flashcardId });
+  }
 }
