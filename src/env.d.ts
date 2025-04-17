@@ -1,11 +1,15 @@
 /// <reference types="astro/client" />
+// This triple-slash directive tells TypeScript to include type definitions for Astro's client-side runtime.
+// It enables proper type checking and autocompletion for Astro-specific features in the client environment.
 
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "./db/database.types";
 
-declare namespace App {
-  interface Locals {
-    supabase: SupabaseClient<Database>;
+declare global {
+  namespace App {
+    interface Locals {
+      supabase: SupabaseClient<Database>;
+    }
   }
 }
 

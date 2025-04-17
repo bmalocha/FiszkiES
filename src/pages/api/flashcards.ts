@@ -17,10 +17,7 @@ import { ActionLogsService } from "../../lib/services/actionLogsService";
  */
 function sanitizeInput(input: CreateFlashcardCommand): CreateFlashcardCommand {
   const sanitizeText = (text: string) => {
-    return text
-      .trim()
-      .replace(/\s+/g, " ") // normalize whitespace
-      .replace(/[\u0000-\u001F\u007F-\u009F]/g, ""); // remove control characters
+    return text.trim().replace(/\s+/g, " "); // normalize whitespace
   };
 
   return {

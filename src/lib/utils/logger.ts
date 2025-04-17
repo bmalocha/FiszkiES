@@ -38,12 +38,15 @@ export function log(level: LogLevel, message: string, context?: LogContext, erro
 
   switch (level) {
     case "info":
+      // eslint-disable-next-line no-console
       console.log(fullMessage);
       break;
     case "warn":
+      // eslint-disable-next-line no-console
       console.warn(fullMessage);
       break;
     case "error":
+      // eslint-disable-next-line no-console
       console.error(fullMessage);
       break;
   }
