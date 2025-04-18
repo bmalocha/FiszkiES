@@ -4,7 +4,7 @@ import type { APIContext, APIRoute } from "astro";
 import type { PostgrestError } from "@supabase/supabase-js";
 import { z } from "zod";
 import { DEFAULT_USER_ID } from "../../db/supabase.client";
-import type { CreateFlashcardCommand, CreateFlashcardResponseDto } from "../../types";
+import type { CreateFlashcardCommand, CreateFlashcardResponseDto, GetFlashcardsResponseDto } from "../../types";
 import { log } from "../../lib/utils/logger";
 import { ActionLogsService } from "../../lib/services/actionLogsService";
 
@@ -47,6 +47,36 @@ const createFlashcardSchema = z.object({
       /^[a-zA-ZáéíóúüñÁÉÍÓÚÜÑ.,!?¿¡\s-]+$/,
       "Example sentence can only contain letters, basic punctuation, spaces, and hyphens"
     ),
+});
+
+// Zod schema for validating GET /api/flashcards query parameters
+const getFlashcardsQuerySchema = z.object({
+  page: z
+    .string()
+    .optional()
+    .transform((val) => {
+      if (!val) return 1;
+      const parsed = parseInt(val, 10);
+      return isNaN(parsed) || parsed < 1 ? 1 : parsed;
+    }),
+  pageSize: z
+    .string()
+    .optional()
+    .transform((val) => {
+      if (!val) return 20;
+      const parsed = parseInt(val, 10);
+      if (isNaN(parsed) || parsed < 1) return 20;
+      // Limit maximum page size to prevent excessive data fetching
+      return Math.min(parsed, 100);
+    }),
+  sortBy: z
+    .enum(["created_at", "polish_word", "spanish_word"])
+    .optional()
+    .transform((val) => val ?? "created_at"),
+  sortOrder: z
+    .enum(["asc", "desc"])
+    .optional()
+    .transform((val) => val ?? "desc"),
 });
 
 export const prerender = false;
@@ -141,6 +171,111 @@ export const POST: APIRoute = async (context: APIContext) => {
     log(
       "error",
       "Unexpected error in POST /api/flashcards",
+      undefined,
+      error instanceof Error ? error : new Error(String(error))
+    );
+    return new Response(JSON.stringify({ error: "Internal server error" }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+};
+
+export const GET: APIRoute = async (context: APIContext) => {
+  try {
+    // Parse and validate query parameters
+    const queryParams = Object.fromEntries(context.url.searchParams.entries());
+    const validationResult = getFlashcardsQuerySchema.safeParse(queryParams);
+
+    if (!validationResult.success) {
+      return new Response(
+        JSON.stringify({
+          error: "Validation failed",
+          details: validationResult.error.errors,
+        }),
+        {
+          status: 400,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+    }
+
+    const { page, pageSize, sortBy, sortOrder } = validationResult.data;
+
+    // Get total count of user's flashcards first
+    const { count: totalItems, error: countError } = await context.locals.supabase
+      .from("flashcards")
+      .select("*", { count: "exact", head: true })
+      .eq("user_id", DEFAULT_USER_ID);
+
+    if (countError) {
+      log("error", "Error counting flashcards", { error: countError });
+      return new Response(JSON.stringify({ error: "Failed to fetch flashcards" }), {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    // Handle case when there are no flashcards
+    if (!totalItems) {
+      const emptyResponse: GetFlashcardsResponseDto = {
+        data: [],
+        pagination: {
+          currentPage: 1,
+          pageSize,
+          totalItems: 0,
+          totalPages: 0,
+        },
+      };
+      return new Response(JSON.stringify(emptyResponse), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    // Calculate total pages and handle out-of-range page number
+    const totalPages = Math.ceil(totalItems / pageSize);
+    const adjustedPage = Math.min(page, totalPages);
+
+    // Calculate pagination range with adjusted page number
+    const from = (adjustedPage - 1) * pageSize;
+    const to = from + pageSize - 1;
+
+    // Fetch paginated and sorted flashcards
+    const { data: flashcards, error: fetchError } = await context.locals.supabase
+      .from("flashcards")
+      .select("*")
+      .eq("user_id", DEFAULT_USER_ID)
+      .order(sortBy, { ascending: sortOrder === "asc" })
+      .range(from, to);
+
+    if (fetchError) {
+      log("error", "Error fetching flashcards", { error: fetchError });
+      return new Response(JSON.stringify({ error: "Failed to fetch flashcards" }), {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    // Prepare and return the response
+    const response: GetFlashcardsResponseDto = {
+      data: flashcards ?? [],
+      pagination: {
+        currentPage: adjustedPage,
+        pageSize,
+        totalItems,
+        totalPages,
+      },
+    };
+
+    return new Response(JSON.stringify(response), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    });
+  } catch (error) {
+    log(
+      "error",
+      "Unexpected error in GET /api/flashcards",
       undefined,
       error instanceof Error ? error : new Error(String(error))
     );
