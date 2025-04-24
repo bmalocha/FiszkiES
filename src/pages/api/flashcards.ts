@@ -40,11 +40,7 @@ const createFlashcardSchema = z.object({
   example_sentence: z
     .string()
     .min(1, "Example sentence is required")
-    .max(300, "Example sentence must not exceed 300 characters")
-    .regex(
-      /^[a-zA-ZáéíóúüñÁÉÍÓÚÜÑ.,!?¿¡\s-]+$/,
-      "Example sentence can only contain letters, basic punctuation, spaces, and hyphens"
-    ),
+    .max(300, "Example sentence must not exceed 300 characters"),
 });
 
 // Zod schema for validating GET /api/flashcards query parameters
