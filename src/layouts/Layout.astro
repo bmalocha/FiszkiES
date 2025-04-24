@@ -1,6 +1,7 @@
 ---
 import "../styles/global.css";
 import { ViewTransitions } from "astro:transitions";
+import TopNavigationBar from "@/components/layout/TopNavigationBar.astro";
 // import Header from "@/components/layout/Header.astro"; // Assume not created yet
 // import Footer from "@/components/layout/Footer.astro"; // Assume not created yet
 import { Toaster } from "@/components/ui/sonner";
@@ -25,7 +26,7 @@ const { title, description } = Astro.props;
     <ViewTransitions />
   </head>
   <body class="min-h-screen flex flex-col bg-background font-sans antialiased">
-    {/* <Header /> */}
+    <TopNavigationBar />
     <main class="flex-grow container mx-auto px-4 py-8">
       <slot />
     </main>
