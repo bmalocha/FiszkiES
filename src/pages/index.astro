@@ -1,8 +1,28 @@
 ---
-import Welcome from "../components/Welcome.astro";
-import Layout from "../layouts/Layout.astro";
+import Layout from "@/layouts/Layout.astro";
 ---
 
-<Layout>
-  <Welcome />
+<Layout title="FiszkiES - Strona główna">
+  <div class="text-center py-16">
+    <h1 class="text-5xl font-bold mb-4 text-primary">Hej!</h1>
+    <h2 class="text-2xl text-muted-foreground mb-8">Rozpocznij swoją przygodę z hiszpańskim!</h2>
+    <p class="max-w-2xl mx-auto text-lg">
+      FiszkiES to strona, która pomoże Ci w nauce języka hiszpańskiego. Automatycznie generuj fiszki z dowolnego
+      wklejonego tekstu, zapisuj je i powtarzaj w interaktywny sposób. Zacznij już dziś!
+    </p>
+    <div class="mt-10 flex justify-center gap-4">
+      <a
+        href="/generate"
+        class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"
+      >
+        Generuj Fiszki
+      </a>
+      <a
+        href="/my-flashcards"
+        class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2"
+      >
+        Zobacz Moje Fiszki
+      </a>
+    </div>
+  </div>
 </Layout>

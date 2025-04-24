@@ -1,0 +1,19 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import { Button } from "@/components/ui/button";
+---
+
+<Layout title="FiszkiES - Powtarzanie (w budowie)">
+  <div class="text-center py-16">
+    <h1 class="text-4xl font-bold mb-6">Strona w budowie</h1>
+    <p class="text-lg text-muted-foreground mb-8">
+      Sekcja powtarzania fiszek jest aktualnie w trakcie przygotowania.
+      <br />
+      Zapraszamy wkrótce!
+    </p>
+    <p class="mb-8">W międzyczasie możesz przejrzeć swoje zapisane fiszki:</p>
+    <Button asChild>
+      <a href="/my-flashcards">Przejdź do Moich Fiszek</a>
+    </Button>
+  </div>
+</Layout>
