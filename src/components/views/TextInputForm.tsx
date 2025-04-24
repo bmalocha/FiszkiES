@@ -54,7 +54,7 @@ const TextInputForm: React.FC<TextInputFormProps> = ({ onSubmit, isGenerating })
           {charCount} / {MAX_CHARS} znaków{isLimitReached ? " - Osiągnięto limit" : ""}
         </p>
       </div>
-      <Button type="submit" disabled={isSubmitDisabled}>
+      <Button type="submit" variant="destructive" disabled={isSubmitDisabled}>
         {isGenerating ? "Generowanie..." : "Generuj fiszki"}
       </Button>
     </form>

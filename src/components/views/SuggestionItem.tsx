@@ -30,7 +30,7 @@ const SuggestionItem: React.FC<SuggestionItemProps> = ({ suggestion: viewModel, 
             <Button variant="outline" size="sm" onClick={handleReject}>
               Odrzuć
             </Button>
-            <Button size="sm" onClick={handleAccept}>
+            <Button variant="destructive" size="sm" onClick={handleAccept}>
               Dodaj
             </Button>
           </div>
@@ -65,7 +65,7 @@ const SuggestionItem: React.FC<SuggestionItemProps> = ({ suggestion: viewModel, 
     <TableRow className={rowClass}>
       <TableCell className="font-medium">{suggestion.polish_word}</TableCell>
       <TableCell>{suggestion.spanish_word}</TableCell>
-      <TableCell>{suggestion.example_sentence}</TableCell>
+      <TableCell className="break-words whitespace-normal max-w-xs">{suggestion.example_sentence}</TableCell>
       <TableCell className="text-right">{renderActions()}</TableCell>
     </TableRow>
   );
