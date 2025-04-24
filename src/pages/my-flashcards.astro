@@ -1,0 +1,15 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import { MyFlashcardsView } from "@/components/views/my-flashcards/MyFlashcardsView";
+
+// Add potential logic here for checking auth status if not handled by middleware
+// Example: Redirect if user is not logged in
+// const session = await Astro.locals.auth.validate();
+// if (!session) {
+//   return Astro.redirect("/login");
+// }
+---
+
+<Layout title="Moje Fiszki">
+  <MyFlashcardsView client:load />
+</Layout>

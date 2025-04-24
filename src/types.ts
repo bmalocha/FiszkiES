@@ -20,6 +20,15 @@ export interface Pagination {
   totalPages: number;
 }
 
+// --- Error Handling ---
+
+/** Generic structure for API error responses. */
+export interface ApiError {
+  message: string; // Main error message
+  status?: number; // HTTP status code
+  details?: unknown; // Additional error details (optional)
+}
+
 // --- Flashcards Resource (`/api/flashcards`) ---
 
 /**

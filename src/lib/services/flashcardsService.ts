@@ -76,6 +76,31 @@ export class FlashcardsService {
   }
 
   /**
+   * Deletes a specific flashcard for the default user
+   */
+  async deleteFlashcard(flashcardId: string): Promise<void> {
+    const { error } = await this.supabase
+      .from("flashcards")
+      .delete()
+      .match({ id: flashcardId, user_id: DEFAULT_USER_ID }); // Ensure user owns the flashcard
+
+    if (error) {
+      log("error", `Error deleting flashcard ${flashcardId}`, { error });
+      throw new Error("Failed to delete flashcard");
+    }
+
+    // TODO: Decide if we should check the count/data to see if a row was actually deleted.
+    // Supabase delete doesn't error if the match condition finds 0 rows.
+    // If no row was deleted (e.g., wrong ID or not user's card), the client currently gets 204.
+    // We might want to return a specific count or fetch the card first to ensure it exists and belongs to the user,
+    // which would allow returning a 404 from the service if not found.
+    // For now, we rely on the match condition and assume success if no DB error occurred.
+
+    // Log the DELETE action
+    await this.actionLogsService.logFlashcardDelete(DEFAULT_USER_ID, flashcardId);
+  }
+
+  /**
    * Handles specific database errors and returns appropriate error messages
    */
   private handleDatabaseError(error: PostgrestError): Error {

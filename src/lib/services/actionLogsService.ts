@@ -49,4 +49,14 @@ export class ActionLogsService {
   async logFlashcardAdd(userId: string, flashcardId: string): Promise<void> {
     await this.logAction(userId, "ADD", { related_flashcard_id: flashcardId });
   }
+
+  /**
+   * Logs a flashcard DELETE action to the action_logs table
+   * @param userId - ID of the user performing the action
+   * @param flashcardId - ID of the flashcard being deleted
+   * @returns void - This function doesn't throw errors, it only logs them
+   */
+  async logFlashcardDelete(userId: string, flashcardId: string): Promise<void> {
+    await this.logAction(userId, "DELETE", { related_flashcard_id: flashcardId });
+  }
 }
