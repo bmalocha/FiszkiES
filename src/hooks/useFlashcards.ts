@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import type { Flashcard, Pagination, GetFlashcardsResponseDto, ApiError } from "@/types";
+import { log } from "@/lib/utils/logger";
 
 const PAGE_SIZE = 20;
 
@@ -47,7 +48,12 @@ export function useFlashcards(): UseFlashcardsResult {
       setPagination(data.pagination);
       setCurrentPage(data.pagination.currentPage); // Ensure current page is synced with response
     } catch (err) {
-      console.error("Error fetching flashcards:", err);
+      log(
+        "error",
+        "Error fetching flashcards",
+        { page, appending },
+        err instanceof Error ? err : new Error(String(err))
+      );
       const apiError = err instanceof Error ? { message: err.message } : (err as ApiError);
       setError(apiError);
     } finally {
@@ -101,7 +107,7 @@ export function useFlashcards(): UseFlashcardsResult {
           : null
       );
     } catch (err) {
-      console.error("Error deleting flashcard:", err);
+      log("error", "Error deleting flashcard", { flashcardId }, err instanceof Error ? err : new Error(String(err)));
       const apiError = err instanceof Error ? { message: err.message } : (err as ApiError);
       setError(apiError);
       // Re-throw the error so the component knows deletion failed
