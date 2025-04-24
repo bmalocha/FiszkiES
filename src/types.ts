@@ -102,3 +102,26 @@ export interface EndSessionCommand {
   /** The ID of the session being ended. */
   sessionId: string;
 }
+
+// --- Generate View UI Types ---
+
+/** Status of processing a single suggestion in the UI */
+export enum SuggestionStatus {
+  PENDING = "pending", // Waiting for user action
+  ADDING = "adding", // Add to database in progress
+  ADDED = "added", // Successfully added to database
+  REJECTING = "rejecting", // Rejection process (usually instant)
+  REJECTED = "rejected", // Rejected by user
+  ERROR = "error", // An error occurred during adding
+  ALREADY_EXISTS = "already_exists", // Flashcard already exists (409 response)
+}
+
+/** ViewModel representing a suggestion along with its UI state */
+export interface SuggestionViewModel {
+  /** The original suggestion data from the API */
+  suggestion: FlashcardSuggestion;
+  /** The current processing status of this suggestion */
+  status: SuggestionStatus;
+  /** Error message specific to this suggestion (if status === ERROR) */
+  errorMessage?: string | null;
+}

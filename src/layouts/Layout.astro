@@ -1,24 +1,36 @@
 ---
 import "../styles/global.css";
+import { ViewTransitions } from "astro:transitions";
+// import Header from "@/components/layout/Header.astro"; // Assume not created yet
+// import Footer from "@/components/layout/Footer.astro"; // Assume not created yet
+import { Toaster } from "@/components/ui/sonner";
 
 interface Props {
-  title?: string;
+  title: string;
+  description?: string;
 }
 
-const { title = "10x Astro Starter" } = Astro.props;
+const { title, description } = Astro.props;
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="pl">
   <head>
     <meta charset="UTF-8" />
+    <meta name="description" content={description || "FiszkiES - Nauka hiszpańskiego przez generowanie fiszek"} />
     <meta name="viewport" content="width=device-width" />
-    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
+    <ViewTransitions />
   </head>
-  <body>
-    <slot />
+  <body class="min-h-screen flex flex-col bg-background font-sans antialiased">
+    {/* <Header /> */}
+    <main class="flex-grow container mx-auto px-4 py-8">
+      <slot />
+    </main>
+    {/* <Footer /> */}
+    <Toaster richColors position="top-right" />
   </body>
 </html>
 
