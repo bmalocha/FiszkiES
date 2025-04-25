@@ -39,14 +39,15 @@ const TextInputForm: React.FC<TextInputFormProps> = ({ onSubmit, isGenerating })
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="grid w-full gap-1.5">
-        <Label htmlFor="text-input">Wklej tekst po hiszpańsku</Label>
+        <Label htmlFor="text-input">Wklej tekst w dowolnym języku</Label>
         <Textarea
           id="text-input"
           placeholder="Wklej tutaj tekst, z którego chcesz wygenerować fiszki..."
           value={text}
           onChange={handleChange}
           maxLength={MAX_CHARS} // HTML5 attribute to prevent typing beyond limit
-          rows={10}
+          rows={5} // Set default rows to 5
+          className="max-h-[7.5rem]" // Add max height constraint for roughly 5 lines
           disabled={isGenerating}
           aria-describedby="char-counter-help"
         />
