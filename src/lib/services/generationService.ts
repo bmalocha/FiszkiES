@@ -119,9 +119,19 @@ ${text}`;
                   items: {
                     type: "object",
                     properties: {
-                      polish_word: { type: "string" },
-                      spanish_word: { type: "string" },
-                      example_sentence: { type: "string" },
+                      polish_word: {
+                        type: "string",
+                        description: "The Polish translation of the Spanish word/phrase.",
+                      },
+                      spanish_word: {
+                        type: "string",
+                        description: "The generated Spanish word/phrase, including the definite article for nouns.",
+                      },
+                      example_sentence: {
+                        type: "string",
+                        description:
+                          "An example sentence in Spanish using the word/phrase, followed by the Polish translation in parentheses.",
+                      },
                     },
                     required: ["polish_word", "spanish_word", "example_sentence"],
                   },
