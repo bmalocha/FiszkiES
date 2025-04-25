@@ -11,3 +11,4 @@ alwaysApply: false
 - Use supabase from context.locals in Astro routes instead of importing supabaseClient directly
 - Use SupabaseClient type from `src/db/supabase.client.ts`, not from `@supabase/supabase-js`
 - Use log function from `src/lib/utils/logger.ts` for logging
+- Ignore linter problem: "Property 'supabase' does not exist on type 'Locals'."

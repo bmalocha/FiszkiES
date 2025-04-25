@@ -111,7 +111,25 @@ ${text}`;
           json_schema: {
             name: "FlashcardsResponse",
             strict: true,
-            schema: FlashcardsResponseSchema.shape,
+            schema: {
+              type: "object",
+              properties: {
+                flashcards: {
+                  type: "array",
+                  items: {
+                    type: "object",
+                    properties: {
+                      polish_word: { type: "string" },
+                      spanish_word: { type: "string" },
+                      example_sentence: { type: "string" },
+                    },
+                    required: ["polish_word", "spanish_word", "example_sentence"],
+                  },
+                },
+              },
+              required: ["flashcards"],
+              additionalProperties: false,
+            },
           },
         },
         params: {
@@ -131,7 +149,10 @@ ${text}`;
       const validationResult = FlashcardsResponseSchema.safeParse(responseData);
 
       if (!validationResult.success) {
-        throw new GenerationError("Invalid response format from language model", validationResult.error);
+        throw new GenerationError(
+          "Invalid response format from language model. Response: " + responseData,
+          validationResult.error
+        );
       }
 
       // Return the flashcards

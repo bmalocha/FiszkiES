@@ -110,6 +110,7 @@ export class OpenRouterService {
         ...(options.params && options.params),
       };
 
+      //console.log("requestBody", JSON.stringify(requestBody));
       // Send request to OpenRouter API
       const response = await fetch(this.openRouterApiUrl, {
         method: "POST",
@@ -128,6 +129,7 @@ export class OpenRouterService {
       // Parse response
       const data = await response.json();
 
+      //console.log("data", JSON.stringify(data));
       // Validate response JSON if using json_schema
       if (options.response_format?.type === "json_schema") {
         try {
