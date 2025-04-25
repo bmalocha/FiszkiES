@@ -10,6 +10,16 @@ export const prerender = false;
 export const DELETE: APIRoute = async ({ params, locals }: APIContext) => {
   try {
     // 1. Validate flashcardId parameter (ensure it's a UUID)
+    if (!locals.user) {
+      log("warn", "Unauthorized attempt to delete flashcard without authentication.");
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    const userId = locals.user.id;
+
     const flashcardId = params.flashcardId;
     const idValidation = z
       .string()
@@ -38,7 +48,7 @@ export const DELETE: APIRoute = async ({ params, locals }: APIContext) => {
 
     // 3. Call service method to delete
     try {
-      await flashcardsService.deleteFlashcard(validFlashcardId);
+      await flashcardsService.deleteFlashcard(userId, validFlashcardId);
       // 4. Return success (204 No Content)
       return new Response(null, { status: 204 });
     } catch (error) {

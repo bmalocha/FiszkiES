@@ -2,7 +2,6 @@ import type { PostgrestError, SupabaseClient } from "@supabase/supabase-js";
 import type { CreateFlashcardCommand, Flashcard } from "../../types";
 import { log } from "../utils/logger";
 import { ActionLogsService } from "./actionLogsService";
-import { DEFAULT_USER_ID } from "../../db/supabase.client";
 
 export class FlashcardsService {
   private readonly actionLogsService: ActionLogsService;
@@ -14,12 +13,12 @@ export class FlashcardsService {
   /**
    * Creates a new flashcard for the default user
    */
-  async createFlashcard(command: CreateFlashcardCommand): Promise<Flashcard> {
+  async createFlashcard(userId: string, command: CreateFlashcardCommand): Promise<Flashcard> {
     const { data: flashcard, error } = await this.supabase
       .from("flashcards")
       .insert({
         ...command,
-        user_id: DEFAULT_USER_ID,
+        user_id: userId,
       })
       .select()
       .single();
@@ -29,7 +28,7 @@ export class FlashcardsService {
     }
 
     // Log the ADD action
-    await this.actionLogsService.logFlashcardAdd(DEFAULT_USER_ID, flashcard.id);
+    await this.actionLogsService.logFlashcardAdd(userId, flashcard.id);
 
     return flashcard;
   }
@@ -37,11 +36,11 @@ export class FlashcardsService {
   /**
    * Gets the total count of flashcards for the default user
    */
-  async getFlashcardsCount(): Promise<number> {
+  async getFlashcardsCount(userId: string): Promise<number> {
     const { count, error } = await this.supabase
       .from("flashcards")
       .select("*", { count: "exact", head: true })
-      .eq("user_id", DEFAULT_USER_ID);
+      .eq("user_id", userId);
 
     if (error) {
       log("error", "Error counting flashcards", { error });
@@ -54,16 +53,19 @@ export class FlashcardsService {
   /**
    * Gets paginated flashcards for the default user
    */
-  async getFlashcards(params: {
-    from: number;
-    to: number;
-    sortBy: string;
-    sortOrder: "asc" | "desc";
-  }): Promise<Flashcard[]> {
+  async getFlashcards(
+    userId: string,
+    params: {
+      from: number;
+      to: number;
+      sortBy: string;
+      sortOrder: "asc" | "desc";
+    }
+  ): Promise<Flashcard[]> {
     const { data: flashcards, error } = await this.supabase
       .from("flashcards")
       .select("id, created_at, example_sentence, polish_word, spanish_word, user_id")
-      .eq("user_id", DEFAULT_USER_ID)
+      .eq("user_id", userId)
       .order(params.sortBy, { ascending: params.sortOrder === "asc" })
       .range(params.from, params.to);
 
@@ -78,11 +80,8 @@ export class FlashcardsService {
   /**
    * Deletes a specific flashcard for the default user
    */
-  async deleteFlashcard(flashcardId: string): Promise<void> {
-    const { error } = await this.supabase
-      .from("flashcards")
-      .delete()
-      .match({ id: flashcardId, user_id: DEFAULT_USER_ID }); // Ensure user owns the flashcard
+  async deleteFlashcard(userId: string, flashcardId: string): Promise<void> {
+    const { error } = await this.supabase.from("flashcards").delete().match({ id: flashcardId, user_id: userId }); // Ensure user owns the flashcard
 
     if (error) {
       log("error", `Error deleting flashcard ${flashcardId}`, { error });
@@ -97,7 +96,7 @@ export class FlashcardsService {
     // For now, we rely on the match condition and assume success if no DB error occurred.
 
     // Log the DELETE action
-    await this.actionLogsService.logFlashcardDelete(DEFAULT_USER_ID, flashcardId);
+    await this.actionLogsService.logFlashcardDelete(userId, flashcardId);
   }
 
   /**

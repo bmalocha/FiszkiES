@@ -3,7 +3,6 @@ import type { APIRoute } from "astro";
 import { GenerationService } from "../../lib/services/generationService";
 import { ActionLogsService } from "../../lib/services/actionLogsService";
 import { generateId } from "../../lib/utils/id";
-import { DEFAULT_USER_ID } from "../../db/supabase.client";
 import { log } from "../../lib/utils/logger";
 
 // Schema for request validation
@@ -16,9 +15,20 @@ export const prerender = false;
 export const POST: APIRoute = async ({ request, locals }) => {
   try {
     if (!locals.supabase) {
-      log("error", "Supabase client not found in locals");
+      log("error", "Supabase client not found in locals for generate endpoint");
       return new Response("Internal Server Error", { status: 500 });
     }
+
+    // Ensure user is logged in
+    if (!locals.user) {
+      log("warn", "Unauthorized attempt to generate flashcards without authentication.");
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    const userId = locals.user.id;
 
     // Validate request body
     const body = await request.json();
@@ -26,7 +36,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
     log("info", "Generating flashcard suggestions", {
       textLength: validatedBody.text.length,
-      userId: DEFAULT_USER_ID,
+      userId: userId,
     });
 
     // Get OpenRouter API key from environment variables
@@ -44,13 +54,13 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
     // Log the action
     const logService = new ActionLogsService(locals.supabase);
-    await logService.logAction(DEFAULT_USER_ID, "GENERATE", {
+    await logService.logAction(userId, "GENERATE", {
       input_text_length: validatedBody.text.length,
       cards_count: suggestionsWithIds.length,
     });
 
     log("info", "Successfully generated flashcard suggestions", {
-      userId: DEFAULT_USER_ID,
+      userId: userId,
       suggestionsCount: suggestionsWithIds.length,
     });
 
@@ -64,7 +74,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     const context = {
       path: "/api/generate",
       method: "POST",
-      userId: DEFAULT_USER_ID,
+      userId: locals.user?.id ?? "unknown",
     };
 
     if (error instanceof z.ZodError) {
