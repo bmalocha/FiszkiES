@@ -12,6 +12,8 @@ interface Props {
 }
 
 const { title, description } = Astro.props;
+const user = Astro.locals.user;
+const isAuthenticated = user !== null;
 ---
 
 <!doctype html>
@@ -25,7 +27,10 @@ const { title, description } = Astro.props;
     <title>{title}</title>
     <ViewTransitions />
   </head>
-  <body class="min-h-screen flex flex-col bg-background font-sans antialiased">
+  <body
+    data-is-authenticated={isAuthenticated.toString()}
+    class="min-h-screen flex flex-col bg-background font-sans antialiased"
+  >
     <TopNavigationBar />
     <main class="flex-grow container mx-auto px-4 py-8">
       <slot />

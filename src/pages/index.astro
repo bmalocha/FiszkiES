@@ -1,13 +1,15 @@
 ---
 import Layout from "@/layouts/Layout.astro";
 
-// TODO: Replace with actual authentication check (e.g., using Astro.locals.session)
-const isLoggedIn = false; // Placeholder
+// Get user information from middleware context
+const user = Astro.locals.user;
+const isLoggedIn = user !== null; // Check if user object exists
 ---
 
 <Layout title="FiszkiES - Strona główna">
   <div class="text-center py-16">
-    <h1 class="text-5xl font-bold mb-4 text-primary">Hej!</h1>
+    {/* Optionally personalize greeting if user is logged in */}
+    <h1 class="text-5xl font-bold mb-4 text-primary">Hej{isLoggedIn ? `, ${user.email}!` : "!"}</h1>
     <h2 class="text-2xl text-muted-foreground mb-8">Rozpocznij swoją przygodę z hiszpańskim!</h2>
     <p class="max-w-2xl mx-auto text-lg">
       FiszkiES to strona, która pomoże Ci w nauce języka hiszpańskiego. Automatycznie generuj fiszki z dowolnego

@@ -1,8 +1,10 @@
 ---
-// Placeholder for user authentication status
-// In a real app, this would come from session/context
-const isAuthenticated = true; // Assume user is logged in for now
-const userEmail = "user@example.com"; // Placeholder email
+import { Button } from "@/components/ui/button"; // Import Button if needed
+
+// Get user from Astro context (populated by middleware)
+const user = Astro.locals.user;
+const isAuthenticated = user !== null;
+const userEmail = user?.email; // Get email if user exists
 ---
 
 <nav class="bg-card border-b border-border sticky top-0 z-50 shadow-sm">
@@ -36,35 +38,22 @@ const userEmail = "user@example.com"; // Placeholder email
 
     <div class="flex items-center space-x-4">
       {
-        isAuthenticated ? (
-          <div class="flex items-center space-x-2">
-            <span class="text-sm text-muted-foreground hidden sm:inline">{userEmail}</span>
-            {/* Placeholder for User Dropdown Menu - Implement later with Shadcn Dropdown */}
-            <button
-              class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 w-10"
-              aria-label="User menu"
-            >
-              {/* User Icon Placeholder */}
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="h-5 w-5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                stroke-width="2"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                />
-              </svg>
-            </button>
-            {/* Logout button placeholder - will be part of the dropdown */}
-            {/* <a href="/api/auth/signout" class="text-sm font-medium text-muted-foreground hover:text-primary">Wyloguj</a> */}
+        isAuthenticated && userEmail ? (
+          <div class="flex items-center space-x-4">
+            <span class="text-sm text-muted-foreground hidden sm:inline" title={userEmail}>
+              {userEmail}
+            </span>
+            {/* Basic Logout Button - Replace/integrate with dropdown later */}
+            <Button variant="outline" size="sm" id="logout-button" aria-label="Wyloguj się">
+              Wyloguj
+            </Button>
+            {/* <button class="..." aria-label="User menu"> ... User Icon ... </button> */}
           </div>
         ) : (
-          <a href="/login" class="text-sm font-medium text-destructive hover:underline">
+          <a
+            href="/login"
+            class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-9 px-3"
+          >
             Zaloguj się
           </a>
         )
@@ -72,3 +61,32 @@ const userEmail = "user@example.com"; // Placeholder email
     </div>
   </div>
 </nav>
+
+<script>
+  // Ensure this script runs after the DOM is ready
+  document.addEventListener("DOMContentLoaded", () => {
+    const isAuthenticated = document.body.getAttribute("data-is-authenticated") === "true";
+
+    if (isAuthenticated) {
+      const logoutButton = document.getElementById("logout-button");
+      if (logoutButton) {
+        logoutButton.addEventListener("click", async () => {
+          try {
+            const response = await fetch("/api/auth/logout", {
+              method: "POST",
+            });
+            if (response.ok) {
+              window.location.href = "/"; // Redirect on success
+            } else {
+              console.error("Logout failed:", await response.text());
+              alert("Wystąpił błąd podczas wylogowywania.");
+            }
+          } catch (error) {
+            console.error("Logout request failed:", error);
+            alert("Nie udało się wysłać żądania wylogowania.");
+          }
+        });
+      }
+    }
+  });
+</script>
