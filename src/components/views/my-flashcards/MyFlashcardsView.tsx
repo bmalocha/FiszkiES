@@ -6,6 +6,7 @@ import { ErrorMessage } from "./ErrorMessage";
 import { EmptyState } from "./EmptyState";
 import { FlashcardList } from "./FlashcardList";
 import { DeleteConfirmationModal } from "./DeleteConfirmationModal";
+import { log } from "@/lib/utils/logger";
 
 export function MyFlashcardsView() {
   const {
@@ -45,7 +46,7 @@ export function MyFlashcardsView() {
       setIsModalOpen(false);
       setFlashcardIdToDelete(null);
     } catch (err) {
-      console.error("Failed to delete flashcard from view:", err);
+      log("error", "Failed to delete flashcard from view", {}, err instanceof Error ? err : new Error(String(err)));
       // Ensure err is treated as ApiError or create a fallback
       const errorMessage =
         err && typeof err === "object" && "message" in err
