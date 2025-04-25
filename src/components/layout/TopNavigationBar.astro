@@ -62,14 +62,14 @@ const userEmail = user?.email; // Get email if user exists
   </div>
 </nav>
 
-<script>
-  // Ensure this script runs after the DOM is ready
-  document.addEventListener("DOMContentLoaded", () => {
-    const isAuthenticated = document.body.getAttribute("data-is-authenticated") === "true";
+<script is:inline>
+  // Wait for Astro's page load event to ensure the DOM is ready after transitions
+  document.addEventListener("astro:page-load", () => {
+    const logoutButton = document.getElementById("logout-button");
 
-    if (isAuthenticated) {
-      const logoutButton = document.getElementById("logout-button");
-      if (logoutButton) {
+    if (logoutButton) {
+      // Check if the listener is already attached to prevent duplicates on client-side navigation
+      if (!logoutButton.dataset.listenerAttached) {
         logoutButton.addEventListener("click", async () => {
           try {
             const response = await fetch("/api/auth/logout", {
@@ -86,6 +86,8 @@ const userEmail = user?.email; // Get email if user exists
             alert("Nie udało się wysłać żądania wylogowania.");
           }
         });
+        // Mark the button so we don't add the listener again
+        logoutButton.dataset.listenerAttached = "true";
       }
     }
   });
