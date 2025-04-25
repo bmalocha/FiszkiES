@@ -27,16 +27,8 @@ function sanitizeInput(input: CreateFlashcardCommand): CreateFlashcardCommand {
 
 // Zod schema for validating the create flashcard command
 const createFlashcardSchema = z.object({
-  polish_word: z
-    .string()
-    .min(1, "Polish word is required")
-    .max(100, "Polish word must not exceed 100 characters")
-    .regex(/^[a-zA-ZąćęłńóśźżĄĆĘŁŃÓŚŹŻ\s-]+$/, "Polish word can only contain letters, spaces, and hyphens"),
-  spanish_word: z
-    .string()
-    .min(1, "Spanish word is required")
-    .max(100, "Spanish word must not exceed 100 characters")
-    .regex(/^[a-zA-ZáéíóúüñÁÉÍÓÚÜÑ\s-]+$/, "Spanish word can only contain letters, spaces, and hyphens"),
+  polish_word: z.string().min(1, "Polish word is required").max(100, "Polish word must not exceed 100 characters"),
+  spanish_word: z.string().min(1, "Spanish word is required").max(100, "Spanish word must not exceed 100 characters"),
   example_sentence: z
     .string()
     .min(1, "Example sentence is required")
