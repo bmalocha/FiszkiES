@@ -1,5 +1,8 @@
 ---
 import Layout from "@/layouts/Layout.astro";
+
+// TODO: Replace with actual authentication check (e.g., using Astro.locals.session)
+const isLoggedIn = false; // Placeholder
 ---
 
 <Layout title="FiszkiES - Strona główna">
@@ -11,18 +14,39 @@ import Layout from "@/layouts/Layout.astro";
       wklejonego tekstu, zapisuj je i powtarzaj w interaktywny sposób. Zacznij już dziś!
     </p>
     <div class="mt-10 flex justify-center gap-4">
-      <a
-        href="/generate"
-        class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"
-      >
-        Generuj Fiszki
-      </a>
-      <a
-        href="/my-flashcards"
-        class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2"
-      >
-        Zobacz Moje Fiszki
-      </a>
+      {
+        isLoggedIn ? (
+          <>
+            <a
+              href="/generate"
+              class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"
+            >
+              Generuj Fiszki
+            </a>
+            <a
+              href="/my-flashcards"
+              class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2"
+            >
+              Zobacz Moje Fiszki
+            </a>
+          </>
+        ) : (
+          <>
+            <a
+              href="/login"
+              class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"
+            >
+              Zaloguj się
+            </a>
+            <a
+              href="/register"
+              class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2"
+            >
+              Zarejestruj się
+            </a>
+          </>
+        )
+      }
     </div>
   </div>
 </Layout>

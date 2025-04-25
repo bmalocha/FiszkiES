@@ -1,0 +1,10 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import RegisterForm from "@/components/RegisterForm.tsx";
+---
+
+<Layout title="FiszkiES - Rejestracja">
+  <div class="flex justify-center items-center min-h-[calc(100vh-10rem)]">
+    <RegisterForm client:load />
+  </div>
+</Layout>
