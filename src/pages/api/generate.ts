@@ -29,9 +29,12 @@ export const POST: APIRoute = async ({ request, locals }) => {
       userId: DEFAULT_USER_ID,
     });
 
+    // Get OpenRouter API key from environment variables
+    const openRouterApiKey = import.meta.env.OPENROUTER_API_KEY;
+
     // Generate flashcard suggestions
-    const generationService = new GenerationService();
-    const suggestions = await generationService.generateFlashcards();
+    const generationService = new GenerationService(openRouterApiKey);
+    const suggestions = await generationService.generateFlashcards(validatedBody.text);
 
     // Add temporary IDs to suggestions
     const suggestionsWithIds = suggestions.map((suggestion) => ({
