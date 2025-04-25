@@ -39,11 +39,12 @@ export class FlashcardsService {
   async getFlashcardsCount(userId: string): Promise<number> {
     const { count, error } = await this.supabase
       .from("flashcards")
-      .select("*", { count: "exact", head: true })
+      .select("count", { count: "exact" })
       .eq("user_id", userId);
 
     if (error) {
-      log("error", "Error counting flashcards", { error });
+      // Log the specific userId along with the error for better debugging
+      log("error", "Error counting flashcards", { userId, error });
       throw new Error("Failed to count flashcards");
     }
 

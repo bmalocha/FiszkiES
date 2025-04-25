@@ -69,6 +69,17 @@ export const prerender = false;
 
 export const POST: APIRoute = async (context: APIContext) => {
   try {
+    // Ensure user is logged in
+    if (!context.locals.user) {
+      log("warn", "Unauthorized attempt to create flashcard without authentication.");
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    const userId = context.locals.user.id;
+
     // Parse and validate request body
     const body = await context.request.json();
     const validationResult = createFlashcardSchema.safeParse(body);
@@ -93,7 +104,7 @@ export const POST: APIRoute = async (context: APIContext) => {
     const flashcardsService = new FlashcardsService(context.locals.supabase);
 
     try {
-      const flashcard = await flashcardsService.createFlashcard(command);
+      const flashcard = await flashcardsService.createFlashcard(userId, command);
 
       // Return the created flashcard
       const response: CreateFlashcardResponseDto = {
@@ -133,6 +144,17 @@ export const POST: APIRoute = async (context: APIContext) => {
 
 export const GET: APIRoute = async (context: APIContext) => {
   try {
+    // Ensure user is logged in
+    if (!context.locals.user) {
+      log("warn", "Unauthorized attempt to get flashcards without authentication.");
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    const userId = context.locals.user.id;
+
     // Parse and validate query parameters
     const queryParams = Object.fromEntries(context.url.searchParams.entries());
     const validationResult = getFlashcardsQuerySchema.safeParse(queryParams);
@@ -154,7 +176,7 @@ export const GET: APIRoute = async (context: APIContext) => {
     const flashcardsService = new FlashcardsService(context.locals.supabase);
 
     // Get total count of user's flashcards
-    const totalItems = await flashcardsService.getFlashcardsCount();
+    const totalItems = await flashcardsService.getFlashcardsCount(userId);
 
     // Handle case when there are no flashcards
     if (!totalItems) {
@@ -182,7 +204,7 @@ export const GET: APIRoute = async (context: APIContext) => {
     const to = from + pageSize - 1;
 
     // Fetch paginated and sorted flashcards
-    const flashcards = await flashcardsService.getFlashcards({
+    const flashcards = await flashcardsService.getFlashcards(userId, {
       from,
       to,
       sortBy,
@@ -209,84 +231,6 @@ export const GET: APIRoute = async (context: APIContext) => {
       "error",
       "Unexpected error in GET /api/flashcards",
       undefined,
-      error instanceof Error ? error : new Error(String(error))
-    );
-    return new Response(JSON.stringify({ error: "Internal server error" }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" },
-    });
-  }
-};
-
-export const DELETE: APIRoute = async ({ params, locals }) => {
-  try {
-    // 1. Validate flashcardId parameter (ensure it's a UUID)
-    const flashcardId = params.flashcardId;
-    const idValidation = z
-      .string()
-      .uuid({
-        message: "Invalid Flashcard ID format. Expected UUID.",
-      })
-      .safeParse(flashcardId);
-
-    if (!idValidation.success) {
-      return new Response(
-        JSON.stringify({
-          error: "Invalid Flashcard ID",
-          details: idValidation.error.errors,
-        }),
-        {
-          status: 400,
-          headers: { "Content-Type": "application/json" },
-        }
-      );
-    }
-
-    const validFlashcardId = idValidation.data;
-
-    // 2. Instantiate service
-    const flashcardsService = new FlashcardsService(locals.supabase);
-
-    // 3. Call service method to delete
-    try {
-      await flashcardsService.deleteFlashcard(validFlashcardId);
-      // 4. Return success (204 No Content)
-      return new Response(null, { status: 204 });
-    } catch (error) {
-      // Handle specific errors from the service
-      if (error instanceof Error) {
-        log(
-          "warn", // Log as warning, as it might be expected (e.g., not found)
-          `Failed to delete flashcard ${validFlashcardId}: ${error.message}`,
-          { flashcardId: validFlashcardId },
-          error
-        );
-        // Check for specific error types if service throws custom errors
-        if (error.message.includes("not found")) {
-          // Simple check
-          return new Response(
-            JSON.stringify({ error: "Flashcard not found or you do not have permission to delete it." }),
-            {
-              status: 404,
-              headers: { "Content-Type": "application/json" },
-            }
-          );
-        }
-        // Generic service error
-        return new Response(JSON.stringify({ error: "Failed to delete flashcard." }), {
-          status: 500, // Or appropriate status based on error
-          headers: { "Content-Type": "application/json" },
-        });
-      }
-      // Re-throw if it's not an expected Error instance
-      throw error;
-    }
-  } catch (error) {
-    // Catch unexpected errors during validation or instantiation
-    log(
-      "error",
-      "Unexpected error in DELETE /api/flashcards/{flashcardId}",
-      { flashcardId: params.flashcardId }, // Log the potentially invalid ID
       error instanceof Error ? error : new Error(String(error))
     );
     return new Response(JSON.stringify({ error: "Internal server error" }), {
