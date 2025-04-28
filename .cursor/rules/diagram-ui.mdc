@@ -1,9 +1,14 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
 Jesteś doświadczonym architektem oprogramowania, którego zadaniem jest utworzenie diagramu Mermaid w celu wizualizacji architektury stron Astro i komponentów React dla modułu logowania i rejestracji. Diagram powinien zostać utworzony w następującym pliku: DESTINATION
 
 Będziesz musiał odnieść się do następujących plików w celu poznania istniejących komponentów:
 
 <file_references>
-[project-prd.md](mdc:.ai/project-prd.md)
+[prd.md](mdc:.ai/prd.md)
 </file_references>
 
 <destination>
