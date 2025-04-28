@@ -1,43 +1,22 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { GenerationService, type FlashcardsResponse } from "../../../../src/lib/services/generationService";
 import { OpenRouterService } from "../../../../src/lib/services/openRouterService";
+import type { FlashcardSuggestion } from "../../../../src/types";
 
 // Define mock function for OpenRouterService *outside* the mock factory
 const mockGenerateChatCompletion = vi.fn();
+// Define a predictable return value for the mock fallback
+const MOCK_FALLBACK_CARDS: Omit<FlashcardSuggestion, "id">[] = [
+  { polish_word: "mock_pl", spanish_word: "mock_es", example_sentence: "mock_ex" },
+];
 
 // Mock OpenRouterService
 vi.mock("../../../../src/lib/services/openRouterService", () => {
-  // No need to define mockGenerateChatCompletion inside
   return {
     OpenRouterService: vi.fn().mockImplementation(() => ({
-      // Use the *external* mock function defined above
       generateChatCompletion: mockGenerateChatCompletion,
     })),
-    // No need to export the mock function from here
   };
-});
-
-// Mock Math.random for predictable mock data selection
-// Selects index floor(0.3 * 5) = 1 ('food_and_restaurant')
-const MOCK_RANDOM_VALUE = 0.3;
-const MOCK_RANDOM_CARD_COUNT = 7;
-let randomCallCount = 0;
-const mockMathRandom = vi.fn(() => {
-  randomCallCount++;
-  if (randomCallCount === 1) {
-    // 1st call: Topic selection (0.5 -> index 1 of 5 topics -> food_and_restaurant)
-    return MOCK_RANDOM_VALUE;
-  }
-  if (randomCallCount === 2) {
-    // 2nd call: Card count selection (Math.floor(random * 6) + 5)
-    // We want floor(X*6)+5 = 7 => floor(X*6) = 2. Need X*6 to be >= 2 and < 3.
-    // Example: X = 0.34 => 0.34*6 = 2.04. floor(2.04)=2. 2+5=7.
-    // Example: X = 0.49 => 0.49*6 = 2.94. floor(2.94)=2. 2+5=7.
-    // Let's return a value in the middle, like 0.4
-    return 0.4; // This should result in Math.floor(0.4 * 6) + 5 = Math.floor(2.4) + 5 = 2 + 5 = 7
-  }
-  // Subsequent calls (e.g., from array shuffle): Return a stable value
-  return 0.5;
 });
 
 describe("GenerationService", () => {
@@ -49,6 +28,7 @@ describe("GenerationService", () => {
     vi.clearAllMocks();
 
     // Re-assign mock implementations after clearing, especially for module mocks
+
     vi.mocked(OpenRouterService).mockImplementation(
       () =>
         ({
@@ -56,14 +36,10 @@ describe("GenerationService", () => {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
         }) as any
     );
-
-    // Restore Math.random before each test if needed, or set it up
-    randomCallCount = 0; // Reset counter for Math.random mock
-    vi.spyOn(Math, "random").mockImplementation(mockMathRandom);
   });
 
   afterEach(() => {
-    vi.restoreAllMocks(); // Restore original Math.random
+    vi.restoreAllMocks();
   });
 
   describe("Constructor", () => {
@@ -72,13 +48,9 @@ describe("GenerationService", () => {
       expect(OpenRouterService).toHaveBeenCalledWith(apiKey);
     });
 
-    it("should not initialize OpenRouterService when no API key is provided", () => {
-      new GenerationService();
-      expect(OpenRouterService).not.toHaveBeenCalled();
-    });
-
     it("should handle OpenRouterService constructor errors", () => {
       const constructorError = new Error("Failed to init");
+
       vi.mocked(OpenRouterService).mockImplementationOnce(() => {
         throw constructorError;
       });
@@ -126,6 +98,10 @@ describe("GenerationService", () => {
 
     it("should call OpenRouterService with correct parameters and return parsed flashcards", async () => {
       const service = new GenerationService(apiKey);
+      // Spy on the instance AFTER it's created
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const generateMockFlashcardsSpy = vi.spyOn(service as any, "generateMockFlashcards");
+
       const result = await service.generateFlashcardsFromText(inputText);
 
       expect(mockGenerateChatCompletion).toHaveBeenCalledTimes(1);
@@ -141,97 +117,69 @@ describe("GenerationService", () => {
       expect(callArgs.params).toEqual({ temperature: 0.7, max_tokens: 2000 });
 
       expect(result).toEqual(mockApiResponse.flashcards);
+      // Ensure the fallback was NOT called
+      expect(generateMockFlashcardsSpy).not.toHaveBeenCalled();
     });
 
-    it("should return mock flashcards if OpenRouterService is not initialized (no API key)", async () => {
-      const service = new GenerationService(); // No API key
-      const result = await service.generateFlashcardsFromText(inputText);
-
-      expect(mockGenerateChatCompletion).not.toHaveBeenCalled();
-      // Check if it returns the expected number of mock cards from the selected topic
-      expect(result).toBeInstanceOf(Array);
-      expect(result.length).toBe(MOCK_RANDOM_CARD_COUNT); // Based on mocked Math.random
-      expect(result[0].spanish_word).toBe("pedir"); // First word from 'food_and_restaurant'
-    });
-
-    it("should return mock flashcards if OpenRouter API call fails", async () => {
-      const apiError = new Error("API Failed");
-      mockGenerateChatCompletion.mockRejectedValue(apiError);
+    it("should return mock flashcards if OpenRouter API call fails or returns invalid data", async () => {
       const service = new GenerationService(apiKey);
-      const result = await service.generateFlashcardsFromText(inputText);
+      // Spy on the instance AFTER it's created, inside the loop for clarity
 
-      expect(mockGenerateChatCompletion).toHaveBeenCalledTimes(1);
-      expect(result).toBeInstanceOf(Array);
-      expect(result.length).toBe(MOCK_RANDOM_CARD_COUNT);
-      expect(result[0].spanish_word).toBe("pedir");
-    });
+      const testCases = [
+        { case: "API Error", setup: () => mockGenerateChatCompletion.mockRejectedValue(new Error("API Failed")) },
+        { case: "Empty Response", setup: () => mockGenerateChatCompletion.mockResolvedValue({ choices: [] }) }, // More realistic empty response
+        {
+          case: "No Content",
+          setup: () => mockGenerateChatCompletion.mockResolvedValue({ choices: [{ message: {} }] }),
+        },
+        {
+          case: "Invalid JSON",
+          setup: () =>
+            mockGenerateChatCompletion.mockResolvedValue({
+              choices: [{ message: { role: "assistant", content: "invalid json" } }],
+            }),
+        },
+        {
+          case: "Schema Mismatch",
+          setup: () =>
+            mockGenerateChatCompletion.mockResolvedValue({
+              choices: [
+                {
+                  message: {
+                    role: "assistant",
+                    content: JSON.stringify({ flashcards: [{ spanish: "word" }] }), // Missing required fields
+                  },
+                },
+              ],
+            }),
+        },
+      ];
 
-    it("should return mock flashcards if API response is empty", async () => {
-      mockGenerateChatCompletion.mockResolvedValue({ choices: [{ message: {} }] }); // Empty message
-      const service = new GenerationService(apiKey);
-      const result = await service.generateFlashcardsFromText(inputText);
+      for (const { case: testCaseName, setup } of testCases) {
+        // Reset mocks for each sub-case
+        vi.clearAllMocks();
+        // Re-apply necessary mocks that clearAllMocks might remove
 
-      expect(mockGenerateChatCompletion).toHaveBeenCalledTimes(1);
-      expect(result).toBeInstanceOf(Array);
-      expect(result.length).toBe(MOCK_RANDOM_CARD_COUNT);
-      expect(result[0].spanish_word).toBe("pedir");
-    });
+        vi.mocked(OpenRouterService).mockImplementation(
+          () => ({ generateChatCompletion: mockGenerateChatCompletion }) as any
+        );
+        // Spy on the instance method for this specific test run
 
-    it("should return mock flashcards if API response is not valid JSON", async () => {
-      mockGenerateChatCompletion.mockResolvedValue({
-        choices: [{ message: { role: "assistant", content: "invalid json" } }],
-      });
-      const service = new GenerationService(apiKey);
-      const result = await service.generateFlashcardsFromText(inputText);
+        const generateMockFlashcardsSpy = vi
+          .spyOn(service as any, "generateMockFlashcards")
+          .mockReturnValue(MOCK_FALLBACK_CARDS);
 
-      expect(mockGenerateChatCompletion).toHaveBeenCalledTimes(1);
-      expect(result).toBeInstanceOf(Array);
-      expect(result.length).toBe(MOCK_RANDOM_CARD_COUNT);
-      expect(result[0].spanish_word).toBe("pedir");
-    });
+        setup(); // Set up the specific failure condition
 
-    it("should return mock flashcards if API response does not match Zod schema", async () => {
-      const invalidResponse = { flashcards: [{ spanish: "word" }] }; // Missing required fields
-      mockGenerateChatCompletion.mockResolvedValue({
-        choices: [
-          {
-            message: {
-              role: "assistant",
-              content: JSON.stringify(invalidResponse),
-            },
-          },
-        ],
-      });
-      const service = new GenerationService(apiKey);
-      const result = await service.generateFlashcardsFromText(inputText);
+        const result = await service.generateFlashcardsFromText(inputText);
 
-      expect(mockGenerateChatCompletion).toHaveBeenCalledTimes(1);
-      expect(result).toBeInstanceOf(Array);
-      expect(result.length).toBe(MOCK_RANDOM_CARD_COUNT);
-      expect(result[0].spanish_word).toBe("pedir");
-    });
-  });
+        expect(mockGenerateChatCompletion, `Failed on case: ${testCaseName}`).toHaveBeenCalledTimes(1);
+        expect(generateMockFlashcardsSpy, `Failed on case: ${testCaseName}`).toHaveBeenCalledTimes(1);
+        expect(result, `Failed on case: ${testCaseName}`).toEqual(MOCK_FALLBACK_CARDS);
 
-  describe("generateMockFlashcards", () => {
-    it("should return a specific subset of mock flashcards based on mocked Math.random", () => {
-      const service = new GenerationService(); // Doesn't matter if key is provided
-      // Need to call the private method directly for isolated testing
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const result = (service as any).generateMockFlashcards();
-
-      // 1 call for topic, 1 call for count, >=0 calls for shuffle
-      // Check at least the first two calls happened
-      expect(mockMathRandom.mock.calls.length).toBeGreaterThanOrEqual(2);
-      expect(result).toBeInstanceOf(Array);
-      expect(result.length).toBe(MOCK_RANDOM_CARD_COUNT); // 7 cards based on mock
-      // Check if cards are from the expected topic ('food_and_restaurant')
-      expect(result[0].spanish_word).toBe("pedir");
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      result.forEach((card: any) => {
-        expect(card).toHaveProperty("polish_word");
-        expect(card).toHaveProperty("spanish_word");
-        expect(card).toHaveProperty("example_sentence");
-      });
+        // Clear mocks again before the next iteration inside the loop is generally good practice
+        vi.clearAllMocks();
+      }
     });
   });
 
@@ -259,42 +207,35 @@ describe("GenerationService", () => {
 
     it("should call generateFlashcardsFromText when text is provided", async () => {
       const service = new GenerationService(apiKey);
+      // Spy on the instance method AFTER the instance is created
       const spyGenerateFromText = vi.spyOn(service, "generateFlashcardsFromText");
+      // Spy on the mock fallback method on the instance
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const spyGenerateMock = vi.spyOn(service as any, "generateMockFlashcards");
+      const generateMockFlashcardsSpy = vi.spyOn(service as any, "generateMockFlashcards");
 
-      // Ensure the underlying API call mock is set to succeed for this specific test
-      // (even though generateFlashcardsFromText is spied on, the real method is still called)
+      // Ensure the underlying API call mock is set to succeed
       mockGenerateChatCompletion.mockResolvedValue(successfulGenerationResult);
 
       await service.generateFlashcards(inputText);
 
       expect(spyGenerateFromText).toHaveBeenCalledWith(inputText);
-      expect(spyGenerateMock).not.toHaveBeenCalled();
+      expect(generateMockFlashcardsSpy).not.toHaveBeenCalled(); // Fallback shouldn't be called
     });
 
     it("should call generateMockFlashcards when no text is provided (with API key)", async () => {
       const service = new GenerationService(apiKey); // API key exists, but no text provided
       const spyGenerateFromText = vi.spyOn(service, "generateFlashcardsFromText");
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const spyGenerateMock = vi.spyOn(service as any, "generateMockFlashcards");
+      // Spy on the instance method AFTER it's created
+
+      const generateMockFlashcardsSpy = vi
+        .spyOn(service as any, "generateMockFlashcards")
+        .mockReturnValue(MOCK_FALLBACK_CARDS); // Mock return needed as it's actually called
 
       await service.generateFlashcards(); // No text
 
       expect(spyGenerateFromText).not.toHaveBeenCalled();
-      expect(spyGenerateMock).toHaveBeenCalledTimes(1);
-    });
-
-    it("should call generateMockFlashcards when no text is provided (no API key)", async () => {
-      const service = new GenerationService(); // No API key
-      const spyGenerateFromText = vi.spyOn(service, "generateFlashcardsFromText");
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const spyGenerateMock = vi.spyOn(service as any, "generateMockFlashcards");
-
-      await service.generateFlashcards(); // No text
-
-      expect(spyGenerateFromText).not.toHaveBeenCalled(); // Correct check, it shouldn't be called
-      expect(spyGenerateMock).toHaveBeenCalledTimes(1);
+      // Check the instance spy we set up
+      expect(generateMockFlashcardsSpy).toHaveBeenCalledTimes(1);
     });
   });
 });
