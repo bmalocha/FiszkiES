@@ -75,7 +75,7 @@ Strategia opiera się na piramidzie testów, z naciskiem na testy jednostkowe i 
 
 *   **Cel:** Weryfikacja poprawności logiki poszczególnych, izolowanych jednostek kodu (funkcje, hooki React, komponenty UI bez złożonych interakcji, funkcje serwisów).
 *   **Techniki:** Testowanie oparte na danych wejściowych i oczekiwanych wynikach, testowanie warunków brzegowych, mockowanie zależności zewnętrznych (innych modułów, API).
-*   **Narzędzia:** Vitest (preferowany ze względu na szybkość i kompatybilność z Vite/Astro) lub Jest, React Testing Library (dla komponentów).
+*   **Narzędzia:** **Vitest** (preferowany ze względu na szybkość i kompatybilność z Vite/Astro), React Testing Library (dla komponentów).
 *   **Kryteria Wejścia:** Kod jednostki jest gotowy i zaimplementowany.
 *   **Kryteria Wyjścia:** Wszystkie zdefiniowane przypadki testowe dla jednostki przechodzą pomyślnie. Osiągnięcie docelowego pokrycia kodu (np. >70%).
 *   **Priorytet:** Wysoki.
@@ -87,8 +87,8 @@ Strategia opiera się na piramidzie testów, z naciskiem na testy jednostkowe i 
     *   Frontend Component (React) ↔ Custom Hook ↔ API Endpoint Call (mockowany lub na żywo w środowisku testowym)
     *   Middleware ↔ Request/Response Flow
     *   Service ↔ External API (OpenRouter - mockowany lub na żywo)
-*   **Techniki:** Testowanie interfejsów API (np. przy użyciu Supertest lub bezpośrednio `fetch` w testach Vitest/Jest), testowanie komponentów React z mockowanymi wywołaniami API (RTL), testowanie z wykorzystaniem instancji Supabase (lokalnej lub dedykowanej testowej).
-*   **Narzędzia:** Vitest/Jest, Supertest, React Testing Library, mock-service-worker (msw) lub inne biblioteki do mockowania API.
+*   **Techniki:** Testowanie interfejsów API (np. przy użyciu Supertest lub bezpośrednio `fetch` w testach Vitest), testowanie komponentów React z mockowanymi wywołaniami API (RTL), testowanie z wykorzystaniem instancji Supabase (lokalnej lub dedykowanej testowej).
+*   **Narzędzia:** **Vitest**, Supertest, React Testing Library, mock-service-worker (msw) lub inne biblioteki do mockowania API.
 *   **Kryteria Wejścia:** Moduły przeznaczone do integracji są zaimplementowane i przeszły testy jednostkowe. Środowisko testowe (lub mocki) jest dostępne.
 *   **Kryteria Wyjścia:** Wszystkie zdefiniowane scenariusze integracyjne przechodzą pomyślnie. Osiągnięcie docelowego pokrycia kodu/przepływów (np. >60%).
 *   **Priorytet:** Wysoki.
@@ -101,7 +101,7 @@ Strategia opiera się na piramidzie testów, z naciskiem na testy jednostkowe i 
     2.  Logowanie -> Generowanie fiszek -> Akceptacja/Odrzucenie -> Weryfikacja w "Moje Fiszki".
     3.  Logowanie -> Przeglądanie "Moje Fiszki" -> Usuwanie fiszki (z potwierdzeniem) -> Weryfikacja usunięcia.
     4.  Logowanie -> Przejście do "Powtarzanie" (weryfikacja strony "w budowie").
-*   **Narzędzia:** Playwright (preferowany) lub Cypress.
+*   **Narzędzia:** **Playwright**.
 *   **Kryteria Wejścia:** Aplikacja jest wdrożona na stabilnym środowisku testowym (Staging). Kluczowe funkcjonalności są zaimplementowane.
 *   **Kryteria Wyjścia:** Wszystkie zdefiniowane krytyczne scenariusze E2E przechodzą pomyślnie.
 *   **Priorytet:** Średnio-Wysoki (skupienie na krytycznych ścieżkach).
@@ -134,7 +134,7 @@ Strategia opiera się na piramidzie testów, z naciskiem na testy jednostkowe i 
 
 *   **Cel:** Zapewnienie, że nowe zmiany (nowe funkcje, poprawki błędów) nie wprowadziły błędów w istniejących, wcześniej działających częściach aplikacji.
 *   **Techniki:** Ponowne wykonanie podzbioru testów z poprzednich poziomów (Unit, Integration, E2E) obejmujących kluczowe funkcjonalności i obszary dotknięte zmianami. Testy eksploracyjne wokół zmodyfikowanych obszarów.
-*   **Narzędzia:** Zautomatyzowane zestawy testów (Vitest/Jest, Playwright/Cypress) uruchamiane w ramach CI/CD, manualne testy eksploracyjne.
+*   **Narzędzia:** Zautomatyzowane zestawy testów (**Vitest**, **Playwright**) uruchamiane w ramach CI/CD, manualne testy eksploracyjne.
 *   **Kryteria Wejścia:** Nowy build aplikacji jest gotowy do testowania po wprowadzeniu zmian.
 *   **Kryteria Wyjścia:** Wszystkie testy w zestawie regresji przechodzą pomyślnie. Nie zidentyfikowano nowych, nieoczekiwanych błędów w istniejących funkcjach.
 *   **Priorytet:** Wysoki (wykonywane często, przed każdym wydaniem).
@@ -169,13 +169,13 @@ Strategia opiera się na piramidzie testów, z naciskiem na testy jednostkowe i 
 
 ### 5.2. Narzędzia testowe
 
-*   **Test Runner / Framework:** Vitest / Jest
+*   **Test Runner / Framework:** **Vitest**
 *   **Testowanie Komponentów React:** React Testing Library (RTL)
 *   **Testowanie API:** Supertest (dla Node.js/Astro endpoints), `fetch` API w testach
-*   **Testy E2E:** Playwright / Cypress
+*   **Testy E2E:** **Playwright**
 *   **Testy Wydajności:** Google Lighthouse, k6 / Artillery
-*   **Testy Bezpieczeństwa:** `npm audit`, Snyk/Dependabot, OWASP ZAP (opcjonalnie)
-*   **Mockowanie:** Vitest/Jest mocks, `msw` (mock-service-worker), Sinon.JS (opcjonalnie)
+*   **Testy Bezpieczeństwa:** `npm audit`, Snyk/Dependabot (jeśli skonfigurowane), OWASP ZAP (opcjonalnie)
+*   **Mockowanie:** Vitest mocks, `msw` (mock-service-worker), Sinon.JS (opcjonalnie)
 *   **Kontrola wersji:** Git, GitHub
 *   **CI/CD:** GitHub Actions
 *   **Konteneryzacja:** Docker (do uruchamiania aplikacji i ew. usług w CI/Staging)
@@ -290,5 +290,5 @@ Jakość procesu testowego i produktu będzie mierzona za pomocą następującyc
     *   Supabase: [https://supabase.com/docs](https://supabase.com/docs)
     *   OpenRouter: [https://openrouter.ai/docs](https://openrouter.ai/docs)
     *   Shadcn/ui: [https://ui.shadcn.com/](https://ui.shadcn.com/)
-    *   Vitest: [https://vitest.dev/](https://vitest.dev/)
-    *   Playwright: [https://playwright.dev/](https://playwright.dev/)
+    *   **Vitest:** [https://vitest.dev/](https://vitest.dev/)
+    *   **Playwright:** [https://playwright.dev/](https://playwright.dev/)

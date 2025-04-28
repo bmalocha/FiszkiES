@@ -28,6 +28,8 @@ FiszkiES is a modern web application that helps Polish users learn Spanish throu
 - [Tailwind CSS](https://tailwindcss.com/) v4.0.17 - Utility-first CSS framework
 - [Shadcn/ui](https://ui.shadcn.com/) - Beautiful and accessible components
 - [Supabase](https://supabase.com/) - Backend services and database
+- [Vitest](https://vitest.dev/) - Unit & integration testing framework
+- [Playwright](https://playwright.dev/) - End-to-end testing framework
 
 ## Getting Started
 
@@ -74,6 +76,8 @@ The application will be available at `http://localhost:3000`
 - `npm run lint` - Run ESLint
 - `npm run lint:fix` - Fix ESLint issues
 - `npm run format` - Format code with Prettier
+- `npm run test` - Run unit and integration tests
+- `npm run test:e2e` - Run end-to-end tests
 
 ## Project Structure
 
@@ -105,6 +109,7 @@ The application will be available at `http://localhost:3000`
 - Write clean, maintainable code
 - Use early returns and guard clauses
 - Implement proper error logging
+- Follow testing guidelines from `.ai/test-plan.md`
 
 ### Frontend Development
 
