@@ -1,5 +1,6 @@
 import { defineConfig } from "vitest/config";
 import react from "@astrojs/react"; // Assuming you might test React components
+import path from "path"; // Import path module
 
 export default defineConfig({
   plugins: [react()], // Add if you test React components directly
@@ -19,5 +20,11 @@ export default defineConfig({
     //     statements: 80,
     //   },
     // },
+  },
+  // Add alias resolution
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "./src"),
+    },
   },
 });
