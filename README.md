@@ -1,6 +1,6 @@
 # FiszkiES
 
-A web application designed to help Polish users learn Spanish by automatically generating flashcards from any pasted text, allowing users to save and interactively practice them.
+A web application designed to help Polish users learn Spanish by automatically generating flashcards from any pasted text, allowing users to save and view them.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
