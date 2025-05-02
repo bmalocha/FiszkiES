@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { GenerationService, type FlashcardsResponse } from "../../../../src/lib/services/generationService";
 import { OpenRouterService } from "../../../../src/lib/services/openRouterService";
@@ -33,7 +34,6 @@ describe("GenerationService", () => {
       () =>
         ({
           generateChatCompletion: mockGenerateChatCompletion,
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
         }) as any
     );
   });
@@ -58,7 +58,7 @@ describe("GenerationService", () => {
       const service = new GenerationService(apiKey);
       expect(OpenRouterService).toHaveBeenCalledWith(apiKey);
       // Service should still be created but openRouterService property will be null
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
       expect((service as any).openRouterService).toBeNull();
     });
   });
@@ -99,7 +99,7 @@ describe("GenerationService", () => {
     it("should call OpenRouterService with correct parameters and return parsed flashcards", async () => {
       const service = new GenerationService(apiKey);
       // Spy on the instance AFTER it's created
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
       const generateMockFlashcardsSpy = vi.spyOn(service as any, "generateMockFlashcards");
 
       const result = await service.generateFlashcardsFromText(inputText);
@@ -210,7 +210,7 @@ describe("GenerationService", () => {
       // Spy on the instance method AFTER the instance is created
       const spyGenerateFromText = vi.spyOn(service, "generateFlashcardsFromText");
       // Spy on the mock fallback method on the instance
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
       const generateMockFlashcardsSpy = vi.spyOn(service as any, "generateMockFlashcards");
 
       // Ensure the underlying API call mock is set to succeed

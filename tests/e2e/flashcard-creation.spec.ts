@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { test, expect } from "@playwright/test";
 import { LoginPage } from "./page-objects/LoginPage";
 import { GeneratePage } from "./page-objects/GeneratePage";
