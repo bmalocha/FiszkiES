@@ -40,6 +40,11 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Setup
+        run: |
+          rm -rf package-lock.json node_modules
+          npm install
+        
       - name: Run unit tests with coverage
         run: npm run test:unit -- --coverage
         env:
