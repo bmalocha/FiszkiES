@@ -132,8 +132,9 @@ export class OpenRouterService {
       //console.log("data", JSON.stringify(data));
       // Validate response JSON if using json_schema
       if (options.response_format?.type === "json_schema") {
+        let assistantMessageContent: string | undefined;
         try {
-          const assistantMessageContent = data.choices[0]?.message?.content;
+          assistantMessageContent = data.choices[0]?.message?.content;
           if (assistantMessageContent) {
             // Just parse to verify valid JSON - we're not using the result directly
             JSON.parse(assistantMessageContent);
@@ -146,6 +147,10 @@ export class OpenRouterService {
             {},
             parseError instanceof Error ? parseError : new Error(String(parseError))
           );
+          if (assistantMessageContent) {
+            log("error", `Response: ${assistantMessageContent}`);
+          }
+
           throw new Error("Failed to parse JSON response from model");
         }
       }
