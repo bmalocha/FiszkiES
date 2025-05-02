@@ -37,10 +37,25 @@ export class MyFlashcardsPage extends BasePage {
 
   // Method to check if a specific flashcard exists by Polish and Spanish words
   async expectFlashcardToExist(polishWord: string, spanishWord: string) {
-    // Locate the row containing the specific Polish word
-    const row = this.flashcardsTableBody.locator("tr", { has: this.page.locator(`text='${polishWord}'`) });
-    // Within that row, check if the Spanish word also exists
-    await expect(row.locator(`text='${spanishWord}'`)).toBeVisible();
-    // Optionally check other details like example sentence if needed
+    // Find all flashcard rows
+    const rows = this.getAllFlashcardItems();
+    // Filter rows to find one that contains both the expected Polish and Spanish words in their respective cells.
+    // This is more robust than relying on text within the row.
+    const matchingRow = rows
+      .filter({
+        has: this.page.locator(`[data-testid^='polish-word-']:has-text("${polishWord}")`),
+        hasText: spanishWord, // Check if the Spanish word exists somewhere in the row context
+      })
+      .filter({
+        has: this.page.locator(`[data-testid^='spanish-word-']:has-text("${spanishWord}")`),
+      });
+
+    // Assert that exactly one such row is visible
+    await expect(matchingRow).toBeVisible();
+    await expect(matchingRow).toHaveCount(1);
+
+    // Optional: Further assert the text content of the specific cells in the found row
+    // await expect(matchingRow.locator(`[data-testid^='polish-word-']`)).toHaveText(polishWord);
+    // await expect(matchingRow.locator(`[data-testid^='spanish-word-']`)).toHaveText(spanishWord);
   }
 }
