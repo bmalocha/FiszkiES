@@ -152,7 +152,7 @@ export class OpenRouterService {
             // Override the original content with the stripped JSON
             if (data.choices && data.choices[0] && data.choices[0].message) {
               data.choices[0].message.content = jsonToParse;
-              console.log("jsonToParse", JSON.stringify(jsonToParse));
+              //console.log("jsonToParse", JSON.stringify(jsonToParse));
             }
           }
         } catch (parseError) {
