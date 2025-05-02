@@ -133,22 +133,39 @@ export class OpenRouterService {
       // Validate response JSON if using json_schema
       if (options.response_format?.type === "json_schema") {
         let assistantMessageContent: string | undefined;
+        let jsonToParse: string | undefined;
         try {
           assistantMessageContent = data.choices[0]?.message?.content;
           if (assistantMessageContent) {
+            // Strip markdown code fences if present
+            const trimmedContent = assistantMessageContent.trim();
+            if (trimmedContent.startsWith("```json") && trimmedContent.endsWith("```")) {
+              jsonToParse = trimmedContent.substring(7, trimmedContent.length - 3).trim();
+            } else {
+              jsonToParse = assistantMessageContent;
+            }
+
             // Just parse to verify valid JSON - we're not using the result directly
-            JSON.parse(assistantMessageContent);
+            JSON.parse(jsonToParse);
             // Additional validation could be added here if needed
+
+            // Override the original content with the stripped JSON
+            if (data.choices && data.choices[0] && data.choices[0].message) {
+              data.choices[0].message.content = jsonToParse;
+              console.log("jsonToParse", JSON.stringify(jsonToParse));
+            }
           }
         } catch (parseError) {
           log(
             "error",
-            "Failed to parse JSON response from model",
+            "Failed to parse JSON response from modell",
             {},
             parseError instanceof Error ? parseError : new Error(String(parseError))
           );
-          if (assistantMessageContent) {
-            log("error", `Response: ${assistantMessageContent}`);
+          if (jsonToParse) {
+            log("error", `Content attempted to parse: ${jsonToParse}`);
+          } else if (assistantMessageContent) {
+            log("error", `Original Response Content: ${assistantMessageContent}`);
           }
 
           throw new Error("Failed to parse JSON response from model");

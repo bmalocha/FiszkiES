@@ -1,0 +1,26 @@
+{
+  "id": "gen-1746212575-BWAJwgH0NnIG2wFar5On",
+  "provider": "Google",
+  "model": "google/gemini-2.0-flash-exp:free",
+  "object": "chat.completion",
+  "created": 1746212575,
+  "choices": [
+    {
+      "logprobs": null,
+      "finish_reason": "stop",
+      "native_finish_reason": "STOP",
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "```json\n{\n  \"vocabulary\": [\n    {\n      \"spanish\": \"la raqueta\",\n      \"polish\": \"rakieta\",\n      \"example_sentence\": \"Necesito una raqueta nueva para jugar al tenis.\",\n      \"polish_translation\": \"(Potrzebuję nowej rakiety do gry w tenisa.)\"\n    },\n    {\n      \"spanish\": \"la pelota de tenis\",\n      \"polish\": \"piłka tenisowa\",\n      \"example_sentence\": \"Hemos perdido una pelota de tenis durante el partido.\",\n      \"polish_translation\": \"(Zgubiliśmy piłkę tenisową podczas meczu.)\"\n    },\n    {\n      \"spanish\": \"la cancha de tenis\",\n      \"polish\": \"kort tenisowy\",\n      \"example_sentence\": \"Esta cancha de tenis es de arcilla.\",\n      \"polish_translation\": \"(Ten kort tenisowy jest ziemny.)\"\n    },\n    {\n      \"spanish\": \"el partido\",\n      \"polish\": \"mecz\",\n      \"example_sentence\": \"El partido de tenis fue muy emocionante.\",\n      \"polish_translation\": \"(Mecz tenisowy był bardzo ekscytujący.)\"\n    },\n    {\n      \"spanish\": \"golpear\",\n      \"polish\": \"uderzać\",\n      \"example_sentence\": \"Es importante golpear la pelota con fuerza.\",\n      \"polish_translation\": \"(Ważne jest, aby uderzać piłkę z siłą.)\"\n    },\n    {\n      \"spanish\": \"el saque\",\n      \"polish\": \"serwis\",\n      \"example_sentence\": \"Su saque es muy potente.\",\n      \"polish_translation\": \"(Jego serwis jest bardzo mocny.)\"\n    },\n    {\n      \"spanish\": \"ganar\",\n      \"polish\": \"wygrywać\",\n      \"example_sentence\": \"Quiero ganar el torneo de tenis.\",\n      \"polish_translation\": \"(Chcę wygrać turniej tenisowy.)\"\n    },\n    {\n      \"spanish\": \"perder\",\n      \"polish\": \"przegrywać\",\n      \"example_sentence\": \"No me gusta perder partidos.\",\n      \"polish_translation\": \"(Nie lubię przegrywać meczów.)\"\n    },\n    {\n      \"spanish\": \"el jugador/la jugadora\",\n      \"polish\": \"gracz/graczka\",\n      \"example_sentence\": \"Es una jugadora de tenis profesional.\",\n      \"polish_translation\": \"(Ona jest profesjonalną tenisistką.)\"\n    }\n  ]\n}\n```",
+        "refusal": null,
+        "reasoning": null
+      }
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 259,
+    "completion_tokens": 571,
+    "total_tokens": 830
+  }
+}
