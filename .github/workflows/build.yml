@@ -31,7 +31,6 @@ jobs:
           # Add any other build-time environment variables here
 
   test:
-    needs: build
     runs-on: ubuntu-latest
 
     steps:
