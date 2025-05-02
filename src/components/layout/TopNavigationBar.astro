@@ -7,6 +7,7 @@ const isAuthenticated = user !== null;
 const userEmail = user?.email; // Get email if user exists
 ---
 
+/** eslint-disable prettier/prettier */
 <nav class="bg-card border-b border-border sticky top-0 z-50 shadow-sm">
   <div class="container mx-auto px-4 h-16 flex items-center justify-between">
     <div class="flex items-center space-x-8">
@@ -67,7 +68,7 @@ const userEmail = user?.email; // Get email if user exists
 </nav>
 
 <script is:inline>
-  // Wait for Astro's page load event to ensure the DOM is ready after transitions
+  // Wait for Astro page load event to ensure the DOM is ready after transitions
   document.addEventListener("astro:page-load", () => {
     const logoutButton = document.getElementById("logout-button");
 
@@ -82,10 +83,12 @@ const userEmail = user?.email; // Get email if user exists
             if (response.ok) {
               window.location.href = "/"; // Redirect on success
             } else {
+              // eslint-disable-next-line no-console
               console.error("Logout failed:", await response.text());
               alert("Wystąpił błąd podczas wylogowywania.");
             }
           } catch (error) {
+            // eslint-disable-next-line no-console
             console.error("Logout request failed:", error);
             alert("Nie udało się wysłać żądania wylogowania.");
           }

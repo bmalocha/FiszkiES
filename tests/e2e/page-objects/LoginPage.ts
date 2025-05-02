@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { type Page, type Locator, expect } from "@playwright/test";
 import { BasePage } from "./BasePage";
 
