@@ -30,8 +30,20 @@ export default defineConfig({
   /* Configure projects for major browsers */
   projects: [
     {
+      name: "setup", // Assuming you might add a setup later; if not, can be omitted or named differently
+      testMatch: /global\.setup\.ts/, // Placeholder, adjust if you add setup
+      // If no setup needed now, you can remove this setup project entirely or keep it for future use.
+      // We will link teardown directly to the main project for now.
+    },
+    {
+      name: "teardown",
+      testMatch: /global\.teardown\.ts/,
+    },
+    {
       name: "chromium",
       use: { ...devices["Desktop Chrome"] },
+      // dependencies: ["setup"], // Uncomment if you add a setup project
+      teardown: "teardown", // Link to the teardown project
     },
 
     // Uncomment if you want to test other browsers
@@ -68,7 +80,7 @@ export default defineConfig({
 
   /* Run your local dev server before starting the tests */
   webServer: {
-    command: "npm run dev",
+    command: "npm run dev --verbose",
     url: "http://localhost:3001", // Updated dev server URL
     reuseExistingServer: !process.env.CI,
     stdout: "pipe",
