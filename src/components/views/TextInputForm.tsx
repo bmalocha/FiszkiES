@@ -50,12 +50,13 @@ const TextInputForm: React.FC<TextInputFormProps> = ({ onSubmit, isGenerating })
           className="max-h-[7.5rem]" // Add max height constraint for roughly 5 lines
           disabled={isGenerating}
           aria-describedby="char-counter-help"
+          data-testid="text-input-area"
         />
         <p id="char-counter-help" className={`text-sm ${isLimitReached ? "text-red-600" : "text-muted-foreground"}`}>
           {charCount} / {MAX_CHARS} znaków{isLimitReached ? " - Osiągnięto limit" : ""}
         </p>
       </div>
-      <Button type="submit" variant="destructive" disabled={isSubmitDisabled}>
+      <Button type="submit" variant="destructive" disabled={isSubmitDisabled} data-testid="generate-button">
         {isGenerating ? "Generowanie..." : "Generuj fiszki"}
       </Button>
     </form>

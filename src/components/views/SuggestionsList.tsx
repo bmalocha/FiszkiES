@@ -15,7 +15,7 @@ const SuggestionsList: React.FC<SuggestionsListProps> = ({ suggestions, onAccept
   }
 
   return (
-    <Table>
+    <Table data-testid="suggestions-table">
       <TableCaption>Propozycje fiszek wygenerowane z Twojego tekstu.</TableCaption>
       <TableHeader>
         <TableRow>
@@ -25,7 +25,7 @@ const SuggestionsList: React.FC<SuggestionsListProps> = ({ suggestions, onAccept
           <TableHead className="text-right w-[15%]">Akcje</TableHead>
         </TableRow>
       </TableHeader>
-      <TableBody>
+      <TableBody data-testid="suggestions-table-body">
         {suggestions.map((viewModel) => (
           <SuggestionItem
             key={viewModel.suggestion.id} // Use the unique frontend ID as key

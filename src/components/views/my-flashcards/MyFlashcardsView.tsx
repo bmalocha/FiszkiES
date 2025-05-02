@@ -78,7 +78,7 @@ export function MyFlashcardsView() {
 
   // Main content - Flashcard List
   return (
-    <div className="container mx-auto p-4">
+    <div className="container mx-auto p-4" data-testid="my-flashcards-view">
       <h1 className="text-2xl font-bold mb-4">Moje Fiszki</h1>
 
       {/* Optional: Display non-blocking fetch errors here if needed */}

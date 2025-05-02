@@ -20,16 +20,19 @@ const userEmail = user?.email; // Get email if user exists
               href="/generate"
               class="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
               set:html={"Generowanie"}
+              data-testid="nav-generate"
             />
             <a
               href="/my-flashcards"
               class="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
               set:html={"Moje Fiszki"}
+              data-testid="nav-my-flashcards"
             />
             <a
               href="/repeat"
               class="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
               set:html={"Powtarzanie"}
+              data-testid="nav-repeat"
             />
           </div>
         )
@@ -44,7 +47,7 @@ const userEmail = user?.email; // Get email if user exists
               {userEmail}
             </span>
             {/* Basic Logout Button - Replace/integrate with dropdown later */}
-            <Button variant="outline" size="sm" id="logout-button" aria-label="Wyloguj się">
+            <Button variant="outline" size="sm" id="logout-button" aria-label="Wyloguj się" data-testid="logout-button">
               Wyloguj
             </Button>
             {/* <button class="..." aria-label="User menu"> ... User Icon ... </button> */}
@@ -53,6 +56,7 @@ const userEmail = user?.email; // Get email if user exists
           <a
             href="/login"
             class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-9 px-3"
+            data-testid="login-button"
           >
             Zaloguj się
           </a>

@@ -10,7 +10,7 @@ const GenerateFlashcardsView: React.FC = () => {
     useGenerateFlashcards(); // resetView might be used later
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-6" data-testid="generate-view">
       <TextInputForm onSubmit={generateSuggestions} isGenerating={isLoading} />
       {/* <div>TextInputForm Placeholder</div> */} {/* Removed placeholder */}
       {isLoading && (

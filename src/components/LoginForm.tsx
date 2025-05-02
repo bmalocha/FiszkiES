@@ -67,6 +67,7 @@ export function LoginForm() {
               value={email}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
               disabled={isLoading}
+              data-testid="login-email-input"
             />
           </div>
           <div className="grid gap-2">
@@ -78,12 +79,13 @@ export function LoginForm() {
               value={password}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
               disabled={isLoading}
+              data-testid="login-password-input"
             />
           </div>
           {error && <p className="text-sm text-destructive data-[loading=true]:opacity-50">{error}</p>}
         </CardContent>
         <CardFooter className="flex flex-col items-start gap-4">
-          <Button type="submit" className="w-full" disabled={isLoading}>
+          <Button type="submit" className="w-full" disabled={isLoading} data-testid="login-submit-button">
             {isLoading ? (
               <>
                 {/* Optional: <Loader2 className="mr-2 h-4 w-4 animate-spin" /> */}

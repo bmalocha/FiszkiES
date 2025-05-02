@@ -21,7 +21,7 @@ export function FlashcardList({
 }: FlashcardListProps) {
   return (
     <>
-      <Table>
+      <Table data-testid="flashcards-table">
         <TableCaption>Lista Twoich fiszek.</TableCaption>
         <TableHeader>
           <TableRow>
@@ -31,7 +31,7 @@ export function FlashcardList({
             <TableHead className="text-right w-[100px]">Akcje</TableHead>
           </TableRow>
         </TableHeader>
-        <TableBody>
+        <TableBody data-testid="flashcards-table-body">
           {flashcards.map((flashcard) => (
             <FlashcardItem
               key={flashcard.id}
@@ -47,6 +47,7 @@ export function FlashcardList({
           onClick={onLoadMore}
           isLoading={isLoadingMore}
           isDisabled={!canLoadMore} // isDisabled is true if canLoadMore is false
+          data-testid="load-more-button"
         />
       )}
     </>

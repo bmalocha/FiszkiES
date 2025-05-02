@@ -27,10 +27,15 @@ const SuggestionItem: React.FC<SuggestionItemProps> = ({ suggestion: viewModel, 
       case SuggestionStatus.PENDING:
         return (
           <div className="flex justify-end gap-2">
-            <Button variant="outline" size="sm" onClick={handleReject}>
+            <Button variant="outline" size="sm" onClick={handleReject} data-testid={`reject-button-${suggestion.id}`}>
               Odrzuć
             </Button>
-            <Button variant="destructive" size="sm" onClick={handleAccept}>
+            <Button
+              variant="destructive"
+              size="sm"
+              onClick={handleAccept}
+              data-testid={`accept-button-${suggestion.id}`}
+            >
               Dodaj
             </Button>
           </div>
@@ -62,10 +67,14 @@ const SuggestionItem: React.FC<SuggestionItemProps> = ({ suggestion: viewModel, 
   const rowClass = isProcessed ? "opacity-60" : ""; // Example: Reduce opacity for processed items
 
   return (
-    <TableRow className={rowClass}>
-      <TableCell className="font-medium">{suggestion.polish_word}</TableCell>
-      <TableCell>{suggestion.spanish_word}</TableCell>
-      <TableCell className="break-words whitespace-normal max-w-xs">{suggestion.example_sentence}</TableCell>
+    <TableRow className={rowClass} data-testid={`suggestion-item-${suggestion.id}`}>
+      <TableCell className="font-medium" data-testid={`polish-word-${suggestion.id}`}>
+        {suggestion.polish_word}
+      </TableCell>
+      <TableCell data-testid={`spanish-word-${suggestion.id}`}>{suggestion.spanish_word}</TableCell>
+      <TableCell className="break-words whitespace-normal max-w-xs" data-testid={`example-sentence-${suggestion.id}`}>
+        {suggestion.example_sentence}
+      </TableCell>
       <TableCell className="text-right">{renderActions()}</TableCell>
     </TableRow>
   );
