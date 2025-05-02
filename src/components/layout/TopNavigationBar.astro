@@ -7,7 +7,7 @@ const isAuthenticated = user !== null;
 const userEmail = user?.email; // Get email if user exists
 ---
 
-/** eslint-disable prettier/prettier */
+/** eslint-disable **/
 <nav class="bg-card border-b border-border sticky top-0 z-50 shadow-sm">
   <div class="container mx-auto px-4 h-16 flex items-center justify-between">
     <div class="flex items-center space-x-8">
@@ -67,9 +67,11 @@ const userEmail = user?.email; // Get email if user exists
   </div>
 </nav>
 
+<!-- prettier-ignore -->
 <script is:inline>
   // Wait for Astro page load event to ensure the DOM is ready after transitions
-  document.addEventListener("astro:page-load", () => {
+  /** eslint-disable **/
+  document.addEventListener("astro:page-load", function () {
     const logoutButton = document.getElementById("logout-button");
 
     if (logoutButton) {
