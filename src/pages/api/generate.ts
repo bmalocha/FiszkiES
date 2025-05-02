@@ -1,5 +1,6 @@
 import { z } from "zod";
 import type { APIRoute } from "astro";
+import { OPENROUTER_API_KEY } from "astro:env/server";
 import { GenerationService } from "../../lib/services/generationService";
 import { ActionLogsService } from "../../lib/services/actionLogsService";
 import { generateId } from "../../lib/utils/id";
@@ -40,10 +41,10 @@ export const POST: APIRoute = async ({ request, locals }) => {
     });
 
     // Get OpenRouter API key from environment variables
-    const openRouterApiKey = import.meta.env.OPENROUTER_API_KEY;
+    // const openRouterApiKey = import.meta.env.OPENROUTER_API_KEY;
 
     // Generate flashcard suggestions
-    const generationService = new GenerationService(openRouterApiKey);
+    const generationService = new GenerationService(OPENROUTER_API_KEY);
     const suggestions = await generationService.generateFlashcards(validatedBody.text);
 
     // Add temporary IDs to suggestions

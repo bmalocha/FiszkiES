@@ -1,5 +1,5 @@
 // @ts-check
-import { defineConfig } from "astro/config";
+import { defineConfig, envField } from "astro/config";
 
 import react from "@astrojs/react";
 import sitemap from "@astrojs/sitemap";
@@ -10,6 +10,13 @@ import cloudflare from "@astrojs/cloudflare";
 // https://astro.build/config
 export default defineConfig({
   output: "server",
+  env: {
+    schema: {
+      SUPABASE_URL: envField.string({ context: "server", access: "public" }),
+      SUPABASE_KEY: envField.string({ context: "server", access: "secret" }),
+      OPENROUTER_API_KEY: envField.string({ context: "server", access: "secret" }),
+    },
+  },
   integrations: [react(), sitemap()],
   server: { port: 3000 },
   vite: {
