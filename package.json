@@ -14,7 +14,8 @@
     "test:unit": "vitest run",
     "test:unit:watch": "vitest",
     "test:coverage": "vitest run --coverage",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "fix-lx": "rm -rf package-lock.json node_modules && npm install"
   },
   "dependencies": {
     "@astrojs/node": "^9.1.3",
