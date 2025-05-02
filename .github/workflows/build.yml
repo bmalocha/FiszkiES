@@ -1,13 +1,39 @@
-name: Hello World Workflow
+name: Build and Test
 
 on:
   push:
     branches: [ master ]
-  
+  workflow_dispatch:
+
 jobs:
-  hello:
+  build_and_test:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
-      - name: Say Hello
-        run: echo "Hello, GitHub Actions!"
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build project
+        run: npm run build
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          # Add any other build-time environment variables here
+
+      - name: Run unit tests
+        run: npm run test:unit
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          # Add any other test-time environment variables here 
