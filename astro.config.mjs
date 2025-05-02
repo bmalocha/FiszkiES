@@ -14,6 +14,14 @@ export default defineConfig({
   server: { port: 3000 },
   vite: {
     plugins: [tailwindcss()],
+    // Workaround for React 19 + Cloudflare: https://github.com/withastro/astro/issues/12824#issuecomment-2563095382
+    resolve: {
+      alias: import.meta.env.PROD
+        ? {
+            "react-dom/server": "react-dom/server.edge",
+          }
+        : {},
+    },
   },
   adapter: cloudflare(),
   experimental: {
