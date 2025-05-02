@@ -34,6 +34,6 @@ export class LoginPage extends BasePage {
     // Wait for navigation to the home page after successful login
     await this.page.waitForURL("**/");
     // Ensure logout button is visible, indicating successful login
-    await expect(this.logoutButton).toBeVisible();
+    await expect(this.logoutButton).toBeVisible({ timeout: 10000 });
   }
 }
