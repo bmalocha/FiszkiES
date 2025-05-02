@@ -44,21 +44,21 @@ jobs:
         run: |
           rm -rf package-lock.json node_modules
           npm install
-        
+
       - name: Run unit tests with coverage
-        run: npm run test:unit -- --coverage
+        run: npm run test:coverage
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
-          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
-          # Add any other test-time environment variables here
+          SUPABASE_PUBLIC_KEY: ${{ secrets.SUPABASE_PUBLIC_KEY }}
+          SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
+          ENV_NAME: integration
 
-      # Optional: Upload coverage artifact
-      # - name: Upload coverage reports
-      #   uses: actions/upload-artifact@v4
-      #   with:
-      #     name: coverage-report
-      #     path: coverage/ # Adjust path if vitest outputs coverage elsewhere
+      - name: Upload unit test coverage
+        uses: actions/upload-artifact@v4
+        with:
+          name: unit-coverage
+          path: coverage/
+          retention-days: 5
 
   summarize:
     name: Summarize Checks
