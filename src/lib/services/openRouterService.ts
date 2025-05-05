@@ -166,10 +166,14 @@ export class OpenRouterService {
             log("error", `Content attempted to parse: ${jsonToParse}`);
           } else if (assistantMessageContent) {
             log("error", `Original Response Content: ${assistantMessageContent}`);
+          } else if (data) {
+            log("error", "Unable to extract content, logging full data object", { data });
           }
 
           throw new Error("Failed to parse JSON response from model");
         }
+      } else {
+        log("error", "Error in generateChatCompletion, logging full data object", { data });
       }
 
       return data;

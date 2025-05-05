@@ -19,9 +19,10 @@ export class GenerationError extends Error {
 const FlashcardsResponseSchema = z.object({
   flashcards: z.array(
     z.object({
-      polish_word: z.string(),
-      spanish_word: z.string(),
+      polish: z.string().describe("The Polish translation of the Spanish word/phrase."),
+      spanish: z.string().describe("The generated Spanish word/phrase, including the definite article for nouns."),
       example_sentence: z.string(),
+      polish_translation: z.string().describe("The Polish translation of the example sentence."),
     })
   ),
 });
@@ -104,7 +105,7 @@ ${text}`;
 
       // Define JSON schema for structured response
       const response = await this.openRouterService.generateChatCompletion({
-        model: "google/gemini-2.0-flash-exp:free", // Could be configurable
+        model: "google/gemini-2.0-flash-exp:free", //"google/gemini-2.0-flash-exp:free", // Could be configurable
         messages,
         response_format: {
           type: "json_schema",
@@ -119,11 +120,11 @@ ${text}`;
                   items: {
                     type: "object",
                     properties: {
-                      polish_word: {
+                      polish: {
                         type: "string",
                         description: "The Polish translation of the Spanish word/phrase.",
                       },
-                      spanish_word: {
+                      spanish: {
                         type: "string",
                         description: "The generated Spanish word/phrase, including the definite article for nouns.",
                       },
@@ -132,8 +133,12 @@ ${text}`;
                         description:
                           "An example sentence in Spanish using the word/phrase, followed by the Polish translation in parentheses.",
                       },
+                      polish_translation: {
+                        type: "string",
+                        description: "The Polish translation of the example sentence.",
+                      },
                     },
-                    required: ["polish_word", "spanish_word", "example_sentence"],
+                    required: ["polish", "spanish", "example_sentence", "polish_translation"],
                   },
                 },
               },
@@ -159,14 +164,24 @@ ${text}`;
       const validationResult = FlashcardsResponseSchema.safeParse(responseData);
 
       if (!validationResult.success) {
+        log("error", "Invalid response format from language model", {
+          error: validationResult.error.format(),
+          responseData: JSON.stringify(responseData),
+        });
         throw new GenerationError(
-          "Invalid response format from language model. Response: " + responseData,
+          "Invalid response format from language model. Response: " + JSON.stringify(responseData),
           validationResult.error
         );
       }
 
-      // Return the flashcards
-      return validationResult.data.flashcards;
+      // Map the validated data to the expected output format
+      const formattedFlashcards = validationResult.data.flashcards.map((card) => ({
+        polish_word: card.polish,
+        spanish_word: card.spanish,
+        example_sentence: `${card.example_sentence} (${card.polish_translation})`,
+      }));
+
+      return formattedFlashcards;
     } catch (error) {
       log(
         "error",
