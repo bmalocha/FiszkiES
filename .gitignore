@@ -26,3 +26,7 @@ pnpm-debug.log*
 
 playwright-report/
 test-results/
+coverage/
+supabase/.temp/
+supabase/.branches/
+test-results/

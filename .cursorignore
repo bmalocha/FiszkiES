@@ -1,0 +1,17 @@
+# Supabase
+.branches
+.temp
+
+# dotenvx
+.env.keys
+.env.local
+.env.*.local
+.env
+.env.test
+
+# test results
+test-results/
+
+# playwright report
+playwright-report/
+coverage/
