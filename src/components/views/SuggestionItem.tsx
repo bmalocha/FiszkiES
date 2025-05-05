@@ -1,7 +1,7 @@
 import React from "react";
-import { TableCell, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge"; // Import Badge for status display
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import type { SuggestionViewModel, FlashcardSuggestion } from "@/types";
 import { SuggestionStatus } from "@/types";
 
@@ -64,19 +64,46 @@ const SuggestionItem: React.FC<SuggestionItemProps> = ({ suggestion: viewModel, 
 
   // Determine if the row should visually indicate a non-pending state
   const isProcessed = status !== SuggestionStatus.PENDING && status !== SuggestionStatus.ADDING;
-  const rowClass = isProcessed ? "opacity-60" : ""; // Example: Reduce opacity for processed items
+  const itemClass = isProcessed ? "opacity-60" : "";
 
   return (
-    <TableRow className={rowClass} data-testid={`suggestion-item-${suggestion.id}`}>
-      <TableCell className="font-medium" data-testid={`polish-word-${suggestion.id}`}>
+    <div className={`${itemClass} md:table-row`} data-testid={`suggestion-item-${suggestion.id}`}>
+      {/* Mobile Card View (Default) */}
+      <div className="md:hidden p-1">
+        <Card>
+          <CardHeader className="pb-2 pt-4">
+            <CardTitle className="text-lg">{suggestion.polish_word}</CardTitle>
+            <p className="text-md text-muted-foreground">{suggestion.spanish_word}</p>
+          </CardHeader>
+          <CardContent className="pb-3">
+            <p className="text-sm text-muted-foreground">Przykład:</p>
+            <p className="text-sm break-words whitespace-normal">{suggestion.example_sentence}</p>
+          </CardContent>
+          <CardFooter className="flex justify-end pt-0 pb-3 px-4">{renderActions()}</CardFooter>
+        </Card>
+      </div>
+
+      {/* Desktop Table Cell View (md and up) */}
+      <div
+        className="hidden md:table-cell align-middle font-medium md:w-[30%] px-4 py-2"
+        data-testid={`polish-word-${suggestion.id}`}
+      >
         {suggestion.polish_word}
-      </TableCell>
-      <TableCell data-testid={`spanish-word-${suggestion.id}`}>{suggestion.spanish_word}</TableCell>
-      <TableCell className="break-words whitespace-normal max-w-xs" data-testid={`example-sentence-${suggestion.id}`}>
+      </div>
+      <div
+        className="hidden md:table-cell align-middle md:w-[30%] px-4 py-2"
+        data-testid={`spanish-word-${suggestion.id}`}
+      >
+        {suggestion.spanish_word}
+      </div>
+      <div
+        className="hidden md:table-cell align-middle break-words whitespace-normal md:w-[30%] px-4 py-2"
+        data-testid={`example-sentence-${suggestion.id}`}
+      >
         {suggestion.example_sentence}
-      </TableCell>
-      <TableCell className="text-right">{renderActions()}</TableCell>
-    </TableRow>
+      </div>
+      <div className="hidden md:table-cell align-middle text-right md:w-[10%] px-4 py-2">{renderActions()}</div>
+    </div>
   );
 };
 

@@ -1,6 +1,5 @@
 import React from "react";
 import type { SuggestionViewModel, FlashcardSuggestion } from "@/types";
-import { Table, TableBody, TableCaption, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import SuggestionItem from "./SuggestionItem"; // Import SuggestionItem
 
 interface SuggestionsListProps {
@@ -15,27 +14,21 @@ const SuggestionsList: React.FC<SuggestionsListProps> = ({ suggestions, onAccept
   }
 
   return (
-    <Table data-testid="suggestions-table">
-      <TableCaption>Propozycje fiszek wygenerowane z Twojego tekstu.</TableCaption>
-      <TableHeader>
-        <TableRow>
-          <TableHead className="w-[25%]">Polski</TableHead>
-          <TableHead className="w-[25%]">Hiszpański</TableHead>
-          <TableHead className="w-[35%]">Zdanie przykładowe</TableHead>
-          <TableHead className="text-right w-[15%]">Akcje</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody data-testid="suggestions-table-body">
+    <div className="md:table md:w-full p-1" data-testid="suggestions-list-container">
+      <p className="text-center text-sm text-muted-foreground mb-4 md:whitespace-nowrap">
+        Propozycje fiszek wygenerowane z Twojego tekstu.
+      </p>
+      <div className="flex flex-col gap-4 md:table-row-group" data-testid="suggestions-list-body">
         {suggestions.map((viewModel) => (
           <SuggestionItem
-            key={viewModel.suggestion.id} // Use the unique frontend ID as key
+            key={viewModel.suggestion.id}
             suggestion={viewModel}
             onAccept={onAccept}
             onReject={onReject}
           />
         ))}
-      </TableBody>
-    </Table>
+      </div>
+    </div>
   );
 };
 
