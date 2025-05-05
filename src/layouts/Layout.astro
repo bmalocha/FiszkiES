@@ -5,6 +5,7 @@ import TopNavigationBar from "@/components/layout/TopNavigationBar.astro";
 // import Header from "@/components/layout/Header.astro"; // Assume not created yet
 // import Footer from "@/components/layout/Footer.astro"; // Assume not created yet
 import { Toaster } from "@/components/ui/sonner";
+import MobileBottomNavigationBar from "@/components/layout/MobileBottomNavigationBar.astro";
 
 interface Props {
   title: string;
@@ -35,6 +36,7 @@ const isAuthenticated = user !== null;
     <main class="flex-grow container mx-auto px-4 py-8">
       <slot />
     </main>
+    <MobileBottomNavigationBar />
     {/* <Footer /> */}
     <Toaster richColors position="top-right" />
   </body>

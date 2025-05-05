@@ -43,7 +43,7 @@ const userEmail = user?.email; // Get email if user exists
       {
         isAuthenticated && userEmail ? (
           <div class="flex items-center space-x-4">
-            <span class="text-sm text-muted-foreground hidden sm:inline" title={userEmail}>
+            <span class="text-sm text-muted-foreground" title={userEmail}>
               {userEmail}
             </span>
             {/* Basic Logout Button - Replace/integrate with dropdown later */}
