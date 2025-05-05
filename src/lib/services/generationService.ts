@@ -68,7 +68,7 @@ You must follow these requirements:
    - The Spanish word/phrase. **If it's a noun, include its definitive article (el, la, los, las).**
    - The Polish translation
    - An example sentence in Spanish showing its usage, inspired by the text's context if possible.
-   - Include the Polish translation of the example sentence in parentheses.
+   - Include the Polish translation of the example sentence.
 3. Select a variety of useful vocabulary (nouns, verbs, adjectives, phrases).
 4. Choose words that are useful for everyday conversation.
 5. Ensure the Spanish example sentences are grammatically correct and natural.
