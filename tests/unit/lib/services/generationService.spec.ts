@@ -65,26 +65,42 @@ describe("GenerationService", () => {
 
   describe("generateFlashcardsFromText", () => {
     // Define shared mock responses for this suite
-    const mockApiResponse: FlashcardsResponse = {
+    const mockApiSchemaResponse: FlashcardsResponse = {
+      // Renamed for clarity
       flashcards: [
         {
-          polish_word: "jedzenie",
-          spanish_word: "la comida",
-          example_sentence: "Me gusta la comida española. (Lubię hiszpańskie jedzenie.)",
+          polish: "jedzenie",
+          spanish: "la comida",
+          example_sentence: "Me gusta la comida española.",
+          polish_translation: "Lubię hiszpańskie jedzenie.",
         },
         {
-          polish_word: "restauracja",
-          spanish_word: "el restaurante",
-          example_sentence: "Vamos a un restaurante mexicano. (Idziemy do meksykańskiej restauracji.)",
+          polish: "restauracja",
+          spanish: "el restaurante",
+          example_sentence: "Vamos a un restaurante mexicano.",
+          polish_translation: "Idziemy do meksykańskiej restauracji.",
         },
       ],
     };
+    // This is what the service method is expected to return AFTER mapping
+    const expectedFormattedFlashcards: Omit<FlashcardSuggestion, "id">[] = [
+      {
+        polish_word: "jedzenie",
+        spanish_word: "la comida",
+        example_sentence: "Me gusta la comida española. (Lubię hiszpańskie jedzenie.)",
+      },
+      {
+        polish_word: "restauracja",
+        spanish_word: "el restaurante",
+        example_sentence: "Vamos a un restaurante mexicano. (Idziemy do meksykańskiej restauracji.)",
+      },
+    ];
     const successfulGenerationResult = {
       choices: [
         {
           message: {
             role: "assistant",
-            content: JSON.stringify(mockApiResponse),
+            content: JSON.stringify(mockApiSchemaResponse), // Use the schema-correct response
           },
         },
       ],
@@ -116,7 +132,7 @@ describe("GenerationService", () => {
       expect(callArgs.response_format?.json_schema?.name).toBe("FlashcardsResponse");
       expect(callArgs.params).toEqual({ temperature: 0.7, max_tokens: 2000 });
 
-      expect(result).toEqual(mockApiResponse.flashcards);
+      expect(result).toEqual(expectedFormattedFlashcards); // Compare with the expected mapped output
       // Ensure the fallback was NOT called
       expect(generateMockFlashcardsSpy).not.toHaveBeenCalled();
     });
@@ -147,7 +163,10 @@ describe("GenerationService", () => {
                 {
                   message: {
                     role: "assistant",
-                    content: JSON.stringify({ flashcards: [{ spanish: "word" }] }), // Missing required fields
+                    // Still provide content that would be valid JSON but missing required schema fields
+                    content: JSON.stringify({
+                      flashcards: [{ spanish: "word", example_sentence: "sentence", polish_translation: "trans" }],
+                    }), // Missing 'polish'
                   },
                 },
               ],
@@ -185,21 +204,23 @@ describe("GenerationService", () => {
 
   describe("generateFlashcards (main method)", () => {
     // Re-use the successful mock response setup from the suite above if needed
-    const mockApiResponse: FlashcardsResponse = {
+    const mockApiSchemaResponseForMain: FlashcardsResponse = {
+      // Renamed for clarity
       flashcards: [
         {
-          polish_word: "jedzenie",
-          spanish_word: "la comida",
-          example_sentence: "Me gusta la comida española. (Lubię hiszpańskie jedzenie.)",
+          polish: "jedzenie",
+          spanish: "la comida",
+          example_sentence: "Me gusta la comida española.",
+          polish_translation: "Lubię hiszpańskie jedzenie.",
         },
       ],
     };
-    const successfulGenerationResult = {
+    const successfulGenerationResultForMain = {
       choices: [
         {
           message: {
             role: "assistant",
-            content: JSON.stringify(mockApiResponse), // Use a simplified version or the full one
+            content: JSON.stringify(mockApiSchemaResponseForMain), // Use the schema-correct response
           },
         },
       ],
@@ -214,7 +235,7 @@ describe("GenerationService", () => {
       const generateMockFlashcardsSpy = vi.spyOn(service as any, "generateMockFlashcards");
 
       // Ensure the underlying API call mock is set to succeed
-      mockGenerateChatCompletion.mockResolvedValue(successfulGenerationResult);
+      mockGenerateChatCompletion.mockResolvedValue(successfulGenerationResultForMain);
 
       await service.generateFlashcards(inputText);
 
