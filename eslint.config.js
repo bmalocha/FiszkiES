@@ -1,6 +1,5 @@
 import { includeIgnoreFile } from "@eslint/compat";
 import eslint from "@eslint/js";
-import eslintPluginPrettier from "eslint-plugin-prettier/recommended";
 import eslintPluginAstro from "eslint-plugin-astro";
 import jsxA11y from "eslint-plugin-jsx-a11y";
 import pluginReact from "eslint-plugin-react";
@@ -56,11 +55,21 @@ const reactConfig = tseslint.config({
   },
 });
 
+const astroConfig = tseslint.config({
+  files: ["**/*.astro"],
+  extends: [eslintPluginAstro.configs["flat/recommended"]],
+  languageOptions: {
+    parser: eslintPluginAstro.parser
+  },
+});
+
 export default tseslint.config(
   includeIgnoreFile(gitignorePath),
+  {
+    ignores: ["**/*.astro"]
+  },
   baseConfig,
   jsxA11yConfig,
   reactConfig,
-  eslintPluginAstro.configs["flat/recommended"],
-  eslintPluginPrettier
+  astroConfig
 );
